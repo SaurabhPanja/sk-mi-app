@@ -19,25 +19,52 @@ function BasicExample() {
   const [itemTotal, setItemTotal] = useState(0)
   const [dimensionError, setDimensionError] = useState(false)
   const [dimensionFieldDisabled, setDimensionDisabled] = useState(true)
+  const [bill, setBill] = useState([])
+  const [itemName, setItemName] = useState("")
+  const [dimension, setDimension] = useState("")
 
   const handleClose = () => {
     setShow(false);
     setRate("")
     setUnit("")
-    setItemTotal(0)
+    setItemTotal("")
   }
   const handleShow = () => setShow(true);
 
   const calculateTotal = (e) => {
+    setDimension(e.target.value)
     const val = e.target.value.toLowerCase().replaceAll("x", "*")
     try {
 
       const evalVal = eval(val)
-      setItemTotal(rate * evalVal)
+      const roundOffTotal = rate * evalVal
+      setItemTotal(prevTotal=>{
+        if(isNaN(roundOffTotal)){
+          return 0
+        }else{
+          return roundOffTotal.toFixed(2)
+        }
+      })
       setDimensionError(false)
     } catch (error) {
       setDimensionError(true)
     }
+  }
+
+  const addItem = () =>{
+    setBill(prevBill=>{
+      return [
+        ...prevBill,
+        {
+          "id": prevBill.length + 1,
+          "itemName": itemName,
+          "rate": rate,
+          "dimension": dimension,
+          "total": itemTotal
+        }
+      ]
+    })
+    handleClose()
   }
 
   useEffect(() => {
@@ -91,6 +118,7 @@ function BasicExample() {
                   const selectedParticular = labourCharges.find(lc => lc.particular == selectedOption['value'])
                   setRate(selectedParticular.rate)
                   setUnit(selectedParticular.unit)
+                  setItemName(selectedOption['value'])
                 }}
                 options={
                   labourCharges.map(lc => (
@@ -136,7 +164,7 @@ function BasicExample() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={addItem}>
             Add
           </Button>
         </Modal.Footer>
@@ -152,7 +180,7 @@ function BasicExample() {
             </Col>
           </Row>
 
-          <Row className='mt-3'>
+          {/* <Row className='mt-3'>
             <Col xs={2}>
             
               <Form.Label>Address</Form.Label>
@@ -160,12 +188,12 @@ function BasicExample() {
             <Col xs={10}>
               <Form.Control as="textarea" type="address" placeholder="Enter Address"  style={{ height: '100px' }} />
             </Col>
-          </Row>
+          </Row> */}
         {/* <Button variant="primary" type="submit">
           Submit
         </Button> */}
       </Form>
-      <ResponsiveTable id="responsive-table"/>
+      <ResponsiveTable id="responsive-table" bill={bill}/>
     </Container>
   );
 }
