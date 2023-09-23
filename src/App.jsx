@@ -9,6 +9,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Select from 'react-select'
 
+import ResponsiveTable from "./GeneratePdf"
+
 function BasicExample() {
   const [labourCharges, setLabourCharges] = useState([])
   const [show, setShow] = useState(false);
@@ -16,7 +18,7 @@ function BasicExample() {
   const [unit, setUnit] = useState("")
   const [itemTotal, setItemTotal] = useState(0)
   const [dimensionError, setDimensionError] = useState(false)
-  const [ dimensionFieldDisabled, setDimensionDisabled] = useState(true)
+  const [dimensionFieldDisabled, setDimensionDisabled] = useState(true)
 
   const handleClose = () => {
     setShow(false);
@@ -125,7 +127,7 @@ function BasicExample() {
 
             <Form.Group className="mb-3">
               <Form.Label>Total</Form.Label>
-              <Form.Control type="text" placeholder="Total" disabled value={itemTotal}/>
+              <Form.Control type="text" placeholder="Total" disabled value={itemTotal} />
             </Form.Group>
 
           </Form>
@@ -139,8 +141,34 @@ function BasicExample() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Form className="mt-3 p-3 bg-body-tertiary">
+          <Row>
+            <Col xs={2}>
+            
+              <Form.Label>Name</Form.Label>
+            </Col>
+            <Col xs={10}>
+              <Form.Control type="username" placeholder="Enter Name" />
+            </Col>
+          </Row>
+
+          <Row className='mt-3'>
+            <Col xs={2}>
+            
+              <Form.Label>Address</Form.Label>
+            </Col>
+            <Col xs={10}>
+              <Form.Control as="textarea" type="address" placeholder="Enter Address"  style={{ height: '100px' }} />
+            </Col>
+          </Row>
+        {/* <Button variant="primary" type="submit">
+          Submit
+        </Button> */}
+      </Form>
+      <ResponsiveTable id="responsive-table"/>
     </Container>
   );
 }
+
 
 export default BasicExample;
