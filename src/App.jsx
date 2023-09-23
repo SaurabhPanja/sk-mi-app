@@ -53,16 +53,19 @@ function BasicExample() {
 
   const addItem = () =>{
     setBill(prevBill=>{
-      return [
-        ...prevBill,
-        {
-          "id": prevBill.length + 1,
-          "itemName": itemName,
-          "rate": rate,
-          "dimension": dimension,
-          "total": itemTotal
-        }
-      ]
+      if(itemName && rate && dimension && itemTotal){
+        return [
+          ...prevBill,
+          {
+            "id": prevBill.length + 1,
+            "itemName": itemName,
+            "rate": rate,
+            "dimension": dimension,
+            "total": itemTotal
+          }
+        ]
+      }
+      return [...prevBill]
     })
     handleClose()
   }
@@ -133,13 +136,13 @@ function BasicExample() {
               <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>Rate</Form.Label>
-                  <Form.Control type="text" placeholder="Rate" value={rate} disabled />
+                  <Form.Control type="text" placeholder="Rate" value={rate.toLocaleString("en-IN")} disabled />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>Unit</Form.Label>
-                  <Form.Control type="text" placeholder="Unit" value={unit} disabled />
+                  <Form.Control type="text" placeholder="Unit" value={unit.toLocaleString("en-IN")} disabled />
                 </Form.Group>
               </Col>
             </Row>
@@ -155,7 +158,7 @@ function BasicExample() {
 
             <Form.Group className="mb-3">
               <Form.Label>Total</Form.Label>
-              <Form.Control type="text" placeholder="Total" disabled value={itemTotal} />
+              <Form.Control type="text" placeholder="Total" disabled value={Number(itemTotal).toLocaleString("en-IN")} />
             </Form.Group>
 
           </Form>
