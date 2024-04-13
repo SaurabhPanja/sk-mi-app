@@ -1,11 +1,12 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
     margin: '5px',
     fontSize: '12px',
     // marginRight: '12px',
-    width: '100px'
+    width: '100px',
+    fontFamily: 'opensans'
   },
   header: {
     marginBottom: 5,
@@ -51,6 +52,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     backgroundColor: '#ddd',
   },
+  partyLeft: {
+    fontWeight: 'bold',
+    width: '80%'
+  }
 });
 
 const InvoiceHeader = () => (
@@ -60,37 +65,47 @@ const InvoiceHeader = () => (
     </View>
     <View style={styles.companyInfo}>
       <Text>D 27 Abdullah Park</Text>
-      <Text>Phone no.: 9898832796 Email: skmaidulsk@gmail.com</Text>
+      <Text>Phone no: 9898832796 Email: skmaidulsk@gmail.com</Text>
       <Text>G pay number 9898832796</Text>
     </View>
   </View>
 );
 
-export default ({ bill }) => (
+export default ({ bill, formData }) => (
   <Document>
     <Page style={styles.page}>
       <InvoiceHeader />
+      <View style={styles.tableRow}>
+        <View style={{flexGrow:1.5, fontWeight: '800'}}>
+          <Text>{formData.name}</Text>
+          <Text>{formData.address}</Text>
+          <Text>{formData.phone}</Text>
+        </View>
+        <View style={{flexGrow:1}}>
+          <Text style={{ width: '30%' }}>{new Date().toLocaleString('en-IN')}</Text>
+        </View>
+      </View>
       <View style={styles.table}>
         <View style={[styles.tableRow, styles.tableHeader]}>
-          <Text style={{width: '5%', ...styles.tableCol}}>#</Text>
-          <Text style={{width: '55%', ...styles.tableCol}}>Item Name</Text>
-          <Text style={{width: '10%', ...styles.tableCol}}>Rate</Text>
-          <Text style={{width: '10%', ...styles.tableCol}}>Dimension</Text>
-          <Text style={{width: '20%', ...styles.tableCol}}>Total</Text>
+          <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
+          <Text style={{ width: '45%', ...styles.tableCol }}>Item Name</Text>
+          <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
+          <Text style={{ width: '20%', ...styles.tableCol }}>Dimension</Text>
+          <Text style={{ width: '20%', ...styles.tableCol }}>Total</Text>
         </View>
         {bill && bill.map((item) => (
           <View style={styles.tableRow} key={item.id}>
-            <Text style={{width: '5%', ...styles.tableCol}}>{item.id}</Text>
-            <Text style={{width: '55%', ...styles.tableCol}}>{item.itemName}</Text>
-            <Text style={{width: '10%', ...styles.tableCol}}>{item.rate}</Text>
-            <Text style={{width: '10%', ...styles.tableCol}}>{item.dimension}</Text>
-            <Text style={{width: '20%', ...styles.tableCol}}>{Number(item.total).toLocaleString("en-IN")}</Text>
+            <Text style={{ width: '5%', ...styles.tableCol }}>{item.id}</Text>
+            <Text style={{ width: '45%', ...styles.tableCol }}>{item.itemName}</Text>
+            <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
+            <Text style={{ width: '20%', ...styles.tableCol }}>{item.dimension}</Text>
+            <Text style={{ width: '20%', ...styles.tableCol }}>{Number(item.total).toLocaleString("en-IN")}</Text>
           </View>
         ))}
 
         <View style={styles.tableRow}>
-          <Text style={{width: '80%', fontSize: '20px' , ...styles.tableCol}}>Total</Text>
-          <Text style={{width: '20%', fontSize: '20px' , ...styles.tableCol}}>{bill.reduce((accumulator, currentValue) => {
+          <Text style={{ width: '80%', fontSize: '18px', ...styles.tableCol }}>Total</Text>
+          <Text style={{ width: '20%', fontSize: '18px', ...styles.tableCol }}>{bill.reduce((accumulator, currentValue) => {
             return accumulator + Number(currentValue['total']);
           }, 0).toLocaleString("en-IN")}</Text>
         </View>

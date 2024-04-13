@@ -8,13 +8,12 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Select from 'react-select'
-import ReactPDF from '@react-pdf/renderer';
-import {Document, Page, PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 import ResponsiveTable from "./ResponsiveTable"
 import InvoicePDF from './InvoicePdf';
 
-function BasicExample() {
+function BillApp() {
   const [labourCharges, setLabourCharges] = useState([])
   const [show, setShow] = useState(false);
   const [rate, setRate] = useState("")
@@ -25,6 +24,19 @@ function BasicExample() {
   const [bill, setBill] = useState([])
   const [itemName, setItemName] = useState("")
   const [dimension, setDimension] = useState("")
+  const [formData, setFormData] = useState({
+    name: '',
+    address: '',
+    phone: '',
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleClose = () => {
     setShow(false);
@@ -41,10 +53,10 @@ function BasicExample() {
 
       const evalVal = eval(val)
       const roundOffTotal = rate * evalVal
-      setItemTotal(prevTotal=>{
-        if(isNaN(roundOffTotal)){
+      setItemTotal(prevTotal => {
+        if (isNaN(roundOffTotal)) {
           return 0
-        }else{
+        } else {
           return roundOffTotal.toFixed(2)
         }
       })
@@ -54,9 +66,9 @@ function BasicExample() {
     }
   }
 
-  const addItem = () =>{
-    setBill(prevBill=>{
-      if(itemName && rate && dimension && itemTotal){
+  const addItem = () => {
+    setBill(prevBill => {
+      if (itemName && rate && dimension && itemTotal) {
         return [
           ...prevBill,
           {
@@ -86,7 +98,7 @@ function BasicExample() {
 
   return (
     <Container>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
         <Container>
           <Navbar.Brand href="/" className='text-danger fw-bold'>S K Maidul Islam</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -176,28 +188,52 @@ function BasicExample() {
         </Modal.Footer>
       </Modal>
       <Form className="mt-3 p-3 bg-body-tertiary">
-          <Row>
-            <Col xs={2}>
-            
-              <Form.Label>Name</Form.Label>
-            </Col>
-            <Col xs={10}>
-              <Form.Control type="username" placeholder="Enter Name" />
-            </Col>
-          </Row>
+        <Row className='mb-2'>
+          <Col xs={2}>
+
+            <Form.Label>Name</Form.Label>
+          </Col>
+          <Col xs={10}>
+            <Form.Control type="username" placeholder="Enter Name" name="name" value={formData.name}
+              onChange={handleInputChange} />
+          </Col>
+        </Row>
+        <Row className='mb-2'>
+          <Col xs={2}>
+
+            <Form.Label>Address</Form.Label>
+          </Col>
+          <Col xs={10}>
+            <Form.Control type="username" placeholder="Enter Address" name="address" value={formData.address}
+              onChange={handleInputChange} />
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+
+            <Form.Label>Contact no</Form.Label>
+          </Col>
+          <Col xs={10}>
+            <Form.Control type="username" placeholder="Enter Contact No" name='phone' value={formData.phone}
+              onChange={handleInputChange} />
+          </Col>
+        </Row>
 
       </Form>
       <ResponsiveTable bill={bill} />
-      <div>
-      <PDFDownloadLink document={<InvoicePDF bill={bill} />} fileName="somename.pdf">
-        {({ blob, url, loading, error }) =>
-          loading ? 'Loading document...' : 'Download now!'
-        }
-      </PDFDownloadLink>
-    </div>
-      
+      <Row>
+        <Col md="auto">
+          <PDFDownloadLink document={<InvoicePDF bill={bill} formData={formData} />} fileName={`${formData.name}.pdf`}>
+            {({ blob, url, loading, error }) =>
+              loading ? 'Loading document...' : <Button variant="outline-info" size='large'>Download now!</Button>
+
+            }
+          </PDFDownloadLink>
+        </Col>
+
+      </Row>
     </Container>
   );
 }
 
-export default BasicExample;
+export default BillApp;
