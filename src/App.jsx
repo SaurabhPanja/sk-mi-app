@@ -32,6 +32,36 @@ function BillApp() {
     phone: '',
   });
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+
+      try {
+        // Get the id parameter from the URL
+        const id = window.location.pathname.split('/').pop();
+
+        // Make sure id is present before making the API call
+        if (id) {
+          // Make your API call here
+
+          const { data, error } = await supabase
+            .from('histories')
+            .select()
+            .eq('id', id)
+          const response = data[0]
+          const {name, address, phone} = response
+          setFormData({name, address, phone})
+          const billObj = JSON.parse(response['bills'])
+          setBill(billObj)
+          // console.log(billObj)
+        }
+      } catch (error) {
+        console.log("Error while fetching data from supabase " + error)
+      }
+    };
+
+    fetchData();
+  }, []);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -280,15 +310,15 @@ function BillApp() {
                 return (
                   <Button
                     onClick={async () => {
-                      console.log({...formData, bills: JSON.stringify(bill)})
+                      // console.log({ ...formData, bills: JSON.stringify(bill) })
                       const { error } = await supabase
                         .from('histories')
-                        .insert({...formData, bills: JSON.stringify(bill)})
+                        .insert({ ...formData, bills: JSON.stringify(bill) })
 
-                        if(error){
-                          console.log(error)
-                          alert("An error occured, please contact saurabh!")
-                        }
+                      if (error) {
+                        console.log(error)
+                        alert("An error occured, please contact saurabh!")
+                      }
                     }}
                     variant="outline-info"
                     size='large'>

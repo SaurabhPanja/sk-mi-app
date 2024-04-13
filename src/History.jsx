@@ -16,7 +16,7 @@ export default () => {
         async function getHistories() {
           const { data, error } = await supabase.from('histories').select()
     
-          console.log(data)
+        //   console.log(data)
           if (data.length > 0) {
             setHistories(data)
           }
@@ -52,15 +52,17 @@ export default () => {
                         <tr>
                             <th>#</th>
                             <th>History</th>
+                            <th>Created At</th>
                         </tr>
                     </thead>
                     <tbody>
                         {histories.map((history, historyIndex) => (
                             <tr key={historyIndex}>
-                                <td>{historyIndex}</td>
+                                <td>{historyIndex + 1}</td>
                                 <td>
-                                    <a href={`/history/${history.id}`}>{history.name} {history.phone}</a>
+                                    <a href={`/history/${history.id}`}>{history.name} | {history.address} | {history.phone}</a>
                                 </td>
+                                <td>{new Date(history.created_at).toLocaleString()}</td>
                             </tr>
                         ))}
                     </tbody>
