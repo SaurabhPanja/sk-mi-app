@@ -13,6 +13,7 @@ const ResponsiveTable = ({ bill }) => {
               <th>Dimension</th>
               <th>Price</th>
               <th>Amount</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>

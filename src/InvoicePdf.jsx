@@ -1,5 +1,8 @@
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
+Font.register(
+  { family: 'opensans', src: '/fonts/opensans.ttf' })
+
 const styles = StyleSheet.create({
   page: {
     margin: '5px',
@@ -65,7 +68,7 @@ const InvoiceHeader = () => (
     </View>
     <View style={styles.companyInfo}>
       <Text>D 27 Abdullah Park</Text>
-      <Text>Phone no: 9898832796 Email: skmaidulsk@gmail.com</Text>
+      <Text>Phone no.: 9898832796 Email: skmaidulsk@gmail.com</Text>
       <Text>G pay number 9898832796</Text>
     </View>
   </View>
@@ -76,12 +79,12 @@ export default ({ bill, formData }) => (
     <Page style={styles.page}>
       <InvoiceHeader />
       <View style={styles.tableRow}>
-        <View style={{flexGrow:1.5, fontWeight: '800'}}>
+        <View style={{ flexGrow: 1.5, fontWeight: '800' }}>
           <Text>{formData.name}</Text>
           <Text>{formData.address}</Text>
           <Text>{formData.phone}</Text>
         </View>
-        <View style={{flexGrow:1}}>
+        <View style={{ flexGrow: 1 }}>
           <Text style={{ width: '30%' }}>{new Date().toLocaleString('en-IN')}</Text>
         </View>
       </View>
