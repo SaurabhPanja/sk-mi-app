@@ -1,40 +1,100 @@
-import React from 'react';
-// import { Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { PDFDownloadLink, Document,  Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
-// Create styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
-    backgroundColor: '#E4E4E4'
+    margin: '5px',
+    fontSize: '12px',
+    // marginRight: '12px',
+    width: '100px'
   },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1
-  }
+  header: {
+    marginBottom: 5,
+    textAlign: 'center',
+    backgroundColor: "#00BFFE",
+    // padding: '5px'
+  },
+  title: {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#fff'
+  },
+  companyInfo: {
+    marginBottom: 5,
+    color: "#fff"
+  },
+  invoiceDetails: {
+    marginBottom: 5,
+  },
+  table: {
+    display: 'table',
+    width: 'auto',
+    borderStyle: 'solid',
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+
+  },
+  tableRow: {
+    flexDirection: 'row',
+  },
+  tableCol: {
+    borderStyle: 'solid',
+    borderColor: '#000',
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    padding: 2,
+    // width: '20%'
+  },
+  tableHeader: {
+    fontWeight: 'bold',
+    backgroundColor: '#ddd',
+  },
 });
 
-// Create Document Component
-const MyDocument = () => (
-
-  <div>
-  <PDFDownloadLink document={  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Section #1</Text>
-      </View>
-      <View style={styles.section}>
-        <Text>Section #2</Text>
-      </View>
-    </Page>
-  </Document>} fileName="somename.pdf">
-    {({ blob, url, loading, error }) =>
-      loading ? 'Loading document...' : 'Download now!'
-    }
-  </PDFDownloadLink>
-</div>
-
+const InvoiceHeader = () => (
+  <View style={styles.header}>
+    <View style={styles.title}>
+      <Text>SK Maidul Islam</Text>
+    </View>
+    <View style={styles.companyInfo}>
+      <Text>D 27 Abdullah Park</Text>
+      <Text>Phone no.: 9898832796 Email: skmaidulsk@gmail.com</Text>
+      <Text>G pay number 9898832796</Text>
+    </View>
+  </View>
 );
 
-export default MyDocument
+export default ({ bill }) => (
+  <Document>
+    <Page style={styles.page}>
+      <InvoiceHeader />
+      <View style={styles.table}>
+        <View style={[styles.tableRow, styles.tableHeader]}>
+          <Text style={{width: '5%', ...styles.tableCol}}>#</Text>
+          <Text style={{width: '55%', ...styles.tableCol}}>Item Name</Text>
+          <Text style={{width: '10%', ...styles.tableCol}}>Rate</Text>
+          <Text style={{width: '10%', ...styles.tableCol}}>Dimension</Text>
+          <Text style={{width: '20%', ...styles.tableCol}}>Total</Text>
+        </View>
+        {bill && bill.map((item) => (
+          <View style={styles.tableRow} key={item.id}>
+            <Text style={{width: '5%', ...styles.tableCol}}>{item.id}</Text>
+            <Text style={{width: '55%', ...styles.tableCol}}>{item.itemName}</Text>
+            <Text style={{width: '10%', ...styles.tableCol}}>{item.rate}</Text>
+            <Text style={{width: '10%', ...styles.tableCol}}>{item.dimension}</Text>
+            <Text style={{width: '20%', ...styles.tableCol}}>{Number(item.total).toLocaleString("en-IN")}</Text>
+          </View>
+        ))}
+
+        <View style={styles.tableRow}>
+          <Text style={{width: '80%', fontSize: '20px' , ...styles.tableCol}}>Total</Text>
+          <Text style={{width: '20%', fontSize: '20px' , ...styles.tableCol}}>{bill.reduce((accumulator, currentValue) => {
+            return accumulator + Number(currentValue['total']);
+          }, 0).toLocaleString("en-IN")}</Text>
+        </View>
+      </View>
+    </Page>
+  </Document>
+);
