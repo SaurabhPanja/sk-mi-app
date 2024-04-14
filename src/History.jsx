@@ -8,6 +8,7 @@ import { supabase } from './supabase';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table'
+import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom';
 
 export default () => {
@@ -62,7 +63,11 @@ export default () => {
                                 <td>
                                     <Link as={Link} to={`/history/${history.id}`}>{history.name} | {history.address} | {history.phone}</Link>
                                 </td>
-                                <td>{new Date(history.created_at).toLocaleString()}</td>
+                                <td>
+                                    <Badge bg="secondary">
+                                        {new Date(history.created_at).toLocaleString()}
+                                    </Badge>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
