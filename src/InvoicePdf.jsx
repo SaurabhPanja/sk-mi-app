@@ -92,16 +92,16 @@ export default ({ bill, formData }) => (
         <View style={[styles.tableRow, styles.tableHeader]}>
           <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
           <Text style={{ width: '45%', ...styles.tableCol }}>Item Name</Text>
-          <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
           <Text style={{ width: '20%', ...styles.tableCol }}>Dimension</Text>
+          <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
           <Text style={{ width: '20%', ...styles.tableCol }}>Total</Text>
         </View>
         {bill && bill.map((item) => (
           <View style={styles.tableRow} key={item.id}>
             <Text style={{ width: '5%', ...styles.tableCol }}>{item.id}</Text>
             <Text style={{ width: '45%', ...styles.tableCol }}>{item.itemName}</Text>
-            <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
             <Text style={{ width: '20%', ...styles.tableCol }}>{item.dimension}</Text>
+            <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
             <Text style={{ width: '20%', ...styles.tableCol }}>{Number(item.total).toLocaleString("en-IN")}</Text>
           </View>
         ))}
