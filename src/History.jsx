@@ -14,7 +14,7 @@ export default () => {
     const [histories, setHistories] = useState([])
     useEffect( () => {
         async function getHistories() {
-          const { data, error } = await supabase.from('histories').select()
+          const { data, error } = await supabase.from('histories').select().order('created_at', { ascending: false })
     
         //   console.log(data)
           if (data.length > 0) {
