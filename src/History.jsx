@@ -60,7 +60,7 @@ export default () => {
                             <tr key={historyIndex}>
                                 <td>{historyIndex + 1}</td>
                                 <td>
-                                    <a href={`/history/${history.id}`}>{history.name} | {history.address} | {history.phone}</a>
+                                    <Link as={Link} to={`/history/${history.id}`}>{history.name} | {history.address} | {history.phone}</Link>
                                 </td>
                                 <td>{new Date(history.created_at).toLocaleString()}</td>
                             </tr>

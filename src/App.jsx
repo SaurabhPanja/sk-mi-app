@@ -157,12 +157,13 @@ function BillApp() {
             </Nav>
             <Nav>
 
-              <Nav.Link as={Link} to="/history">
+              
                 <Button
-                  className='btn-warning m-2'
-                >
+                  className='btn-warning m-2 p-0'
+                ><Nav.Link as={Link} to="/history">
                   History
-                </Button></Nav.Link>
+                  </Nav.Link>
+                </Button>
 
             </Nav>
           </Navbar.Collapse>
