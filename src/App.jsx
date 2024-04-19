@@ -49,8 +49,8 @@ function BillApp() {
             .select()
             .eq('id', id)
           const response = data[0]
-          const {name, address, phone} = response
-          setFormData({name, address, phone})
+          const { name, address, phone } = response
+          setFormData({ name, address, phone })
           const billObj = JSON.parse(response['bills'])
           setBill(billObj)
           // console.log(billObj)
@@ -121,6 +121,31 @@ function BillApp() {
     setBill(prevState => prevState.filter(item => item.id !== idToDelete));
   };
 
+  const handleDimensionChange = (index, newValue) => {
+    // Create a copy of the billItems array
+    // console.log("Executed!")
+    const updatedBillItems = [...bill];
+    // Update the dimension of the item at the specified index
+    // console.log(updatedBillItems[index])
+    updatedBillItems[index - 1].dimension = newValue
+    let evalVal = 0
+    try{
+
+      const val = newValue.toLowerCase().replaceAll("x", "*")
+      evalVal = eval(val)
+    }catch(erro){
+      evalVal = NaN
+    }
+    // console.log(evalVal)
+    const roundOffTotal = updatedBillItems[index - 1].rate * evalVal
+
+    updatedBillItems[index - 1].total = roundOffTotal.toFixed(2)
+    // console.log(updatedBillItems)
+    // Update the state with the modified array
+    // console.log(updatedBillItems)
+    setBill(updatedBillItems);
+  };
+
   useEffect(() => {
     async function fetchData() {
       // You can await here
@@ -157,13 +182,13 @@ function BillApp() {
             </Nav>
             <Nav>
 
-              
-                <Button
-                  className='btn-warning m-2 p-0'
-                ><Nav.Link as={Link} to="/history">
+
+              <Button
+                className='btn-warning m-2 p-0'
+              ><Nav.Link as={Link} to="/history">
                   History
-                  </Nav.Link>
-                </Button>
+                </Nav.Link>
+              </Button>
 
             </Nav>
           </Navbar.Collapse>
@@ -285,7 +310,9 @@ function BillApp() {
                 <tr key={rowIndex}>
                   <td>{row.id}</td>
                   <td>{row.itemName}</td>
-                  <td>{row.dimension}</td>
+                  <td>
+                    <Form.Control type="text" value={row.dimension} onChange={(e)=>handleDimensionChange(row.id, e.target.value)} />
+                  </td>
                   <td>₹ {row.rate}</td>
                   <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
                   <td><Button variant='outline-danger' onClick={() => deleteItem(row.id)}>Delete</Button></td>
