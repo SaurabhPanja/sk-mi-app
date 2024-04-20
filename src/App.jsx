@@ -30,6 +30,9 @@ function BillApp() {
     name: '',
     address: '',
     phone: '',
+    description: '',
+    advances: '',
+    advancesTotal: ''
   });
 
 
@@ -49,8 +52,8 @@ function BillApp() {
             .select()
             .eq('id', id)
           const response = data[0]
-          const { name, address, phone } = response
-          setFormData({ name, address, phone })
+          const { name, address, phone, description, advances } = response
+          setFormData({ name, address, phone, description, advances })
           const billObj = JSON.parse(response['bills'])
           setBill(billObj)
           // console.log(billObj)
@@ -129,11 +132,11 @@ function BillApp() {
     // console.log(updatedBillItems[index])
     updatedBillItems[index - 1].dimension = newValue
     let evalVal = 0
-    try{
+    try {
 
       const val = newValue.toLowerCase().replaceAll("x", "*")
       evalVal = eval(val)
-    }catch(erro){
+    } catch (erro) {
       evalVal = NaN
     }
     // console.log(evalVal)
@@ -199,7 +202,7 @@ function BillApp() {
           <Modal.Title>Add Item</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form autoComplete='off'>
             <Form.Group className="mb-3" >
               <Form.Label>Particular</Form.Label>
               <Select
@@ -259,35 +262,59 @@ function BillApp() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Form className="mt-3 p-3 bg-body-tertiary">
+      <Form className="mt-3 p-3 bg-body-tertiary" autoComplete='off'>
         <Row className='mb-2'>
-          <Col xs={2}>
+          {/* <Col xs={2}>
 
             <Form.Label>Name</Form.Label>
-          </Col>
-          <Col xs={10}>
+          </Col> */}
+          <Col xs={12}>
             <Form.Control type="username" placeholder="Enter Name" name="name" value={formData.name}
               onChange={handleInputChange} />
           </Col>
         </Row>
         <Row className='mb-2'>
-          <Col xs={2}>
+          {/* <Col xs={2}>
 
             <Form.Label>Address</Form.Label>
-          </Col>
-          <Col xs={10}>
+          </Col> */}
+          <Col xs={12}>
             <Form.Control type="username" placeholder="Enter Address" name="address" value={formData.address}
               onChange={handleInputChange} />
           </Col>
         </Row>
-        <Row>
-          <Col xs={2}>
+        <Row className='mb-2'>
+          {/* <Col xs={2}>
 
             <Form.Label>Contact no</Form.Label>
-          </Col>
-          <Col xs={10}>
+          </Col> */}
+          <Col xs={12}>
             <Form.Control type="username" placeholder="Enter Contact No" name='phone' value={formData.phone}
               onChange={handleInputChange} />
+          </Col>
+        </Row>
+        <Row>
+          {/* <Col xs={2}>
+
+            <Form.Label>Contact no</Form.Label>
+          </Col> */}
+          <Col xs={8}>
+            <Form.Control as="textarea" placeholder="Enter Description" name='description' rows={3} value={formData.description}
+              onChange={handleInputChange} />
+          </Col>
+          <Col xs={4}>
+            <Form.Control placeholder="Advances" name='advances' value={formData.advances}
+              onChange={handleInputChange}
+            />
+            <Form.Control className='mt-2' placeholder='Advances Total' name='advancesTotal' onFocus={()=>{
+              try{
+                const advancesTotal = eval(formData.advances)
+                console.log(advancesTotal)
+                setFormData((prevState)=>({...prevState, advancesTotal}))
+              }catch(error){
+                setFormData((prevState)=>({...prevState, advancesTotal: 0}))
+              }
+            }} value={Number(formData.advancesTotal).toLocaleString("en-IN")} readOnly />
           </Col>
         </Row>
 
@@ -311,7 +338,7 @@ function BillApp() {
                   <td>{row.id}</td>
                   <td>{row.itemName}</td>
                   <td>
-                    <Form.Control type="text" value={row.dimension} onChange={(e)=>handleDimensionChange(row.id, e.target.value)} />
+                    <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
                   </td>
                   <td>₹ {row.rate}</td>
                   <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
@@ -320,9 +347,21 @@ function BillApp() {
               ))}
               <tr key="total">
                 <td colSpan={5} className='text-end'>Total</td>
-                <td className='fw-bold'>₹ {bill.reduce((accumulator, currentValue) => {
+                <td>₹ {bill.reduce((accumulator, currentValue) => {
                   return accumulator + Number(currentValue['total']);
                 }, 0).toLocaleString("en-IN")}</td>
+              </tr>
+              <tr key="advance">
+                <td colSpan={5} className='text-end'>Advance</td>
+                <td>₹ {Number(formData.advancesTotal).toLocaleString("en-IN")}</td>
+              </tr>
+              <tr key="balance" className='fw-bold'>
+                <td colSpan={5} className='text-end'>Balance</td>
+                <td>₹ 
+                {bill.reduce((accumulator, currentValue) => {
+                  return accumulator + Number(currentValue['total']);
+                }, -1 * formData.advancesTotal).toLocaleString("en-IN")}
+                </td>
               </tr>
             </tbody>
           </Table>
