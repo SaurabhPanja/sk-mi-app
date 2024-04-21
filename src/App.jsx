@@ -78,12 +78,12 @@ function BillApp() {
     setRate("")
     setUnit("")
     setItemTotal("")
+    setDimension("")
   }
   const handleShow = () => setShow(true);
 
-  const calculateTotal = (e) => {
-    // setDimension(e.target.value)
-    const val = e.target.value.toLowerCase().replaceAll("x", "*")
+  useEffect(()=>{
+    const val = dimension.toLowerCase().replaceAll("x", "*")
     try {
 
       const evalVal = eval(val)
@@ -99,7 +99,28 @@ function BillApp() {
     } catch (error) {
       setDimensionError(true)
     }
-  }
+
+  },[rate, dimension])
+
+  // const calculateTotal = () => {
+  //   // setDimension(e.target.value)
+  //   const val = dimension.toLowerCase().replaceAll("x", "*")
+  //   try {
+
+  //     const evalVal = eval(val)
+  //     const roundOffTotal = rate * evalVal
+  //     setItemTotal(prevTotal => {
+  //       if (isNaN(roundOffTotal)) {
+  //         return 0
+  //       } else {
+  //         return roundOffTotal.toFixed(2)
+  //       }
+  //     })
+  //     setDimensionError(false)
+  //   } catch (error) {
+  //     setDimensionError(true)
+  //   }
+  // }
 
   const addItem = () => {
     setBill(prevBill => {
@@ -229,7 +250,6 @@ function BillApp() {
                   {/* dynamic rate change */}
                   <Form.Control type="text" placeholder="Rate" value={rate.toLocaleString("en-IN")} onChange={(e) => {
                     setRate(e.target.value)
-                    calculateTotal(e)
                   }} />
                 </Form.Group>
               </Col>
@@ -245,7 +265,6 @@ function BillApp() {
             <Form.Group className="mb-3">
               <Form.Label>Dimension</Form.Label>
               <Form.Control type="text" placeholder="Enter Dimension" onChange={(e) => {
-                calculateTotal(e)
                 setDimension(e.target.value)
               }} disabled={dimensionFieldDisabled} />
               {dimensionError && <Form.Text className="text-danger">
@@ -375,7 +394,7 @@ function BillApp() {
         </Col>
       </Row>
       <Row>
-        <Col md="auto">
+        <Col xs={12} className='d-flex'>
           <PDFDownloadLink document={<InvoicePDF bill={bill} formData={formData} />} fileName={`${formData.name}.pdf`}>
             {({ blob, url, loading, error }) => {
               if (loading) {
