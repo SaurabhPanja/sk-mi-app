@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from './supabase';
 
 import InvoicePDF from './InvoicePdf';
+import LabourChargesPdf from './LabourChargesPdf';
 
 function BillApp() {
   const [labourCharges, setLabourCharges] = useState([])
@@ -83,7 +84,7 @@ function BillApp() {
   }
   const handleShow = () => setShow(true);
 
-  useEffect(()=>{
+  useEffect(() => {
     const val = dimension.toLowerCase().replaceAll("x", "*")
     try {
 
@@ -101,7 +102,7 @@ function BillApp() {
       setDimensionError(true)
     }
 
-  },[rate, dimension])
+  }, [rate, dimension])
 
   // const calculateTotal = () => {
   //   // setDimension(e.target.value)
@@ -191,17 +192,53 @@ function BillApp() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
               <Form.Select size="lg"
-                className='m-2' onChange={(e)=>setPanelUrl(e.target.value)}>
-                  <option value="https://script.googleusercontent.com/macros/echo?user_content_key=5Rl60qFjHih-wXiqLkEREf0zR7iUrXOZIYAHaQyge0rtkSlWMR_cXoiBZyR8M_ORAq-zh4JXaiqhpqXFHiEkZC8l4onhOF9wm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnI24BgTL3TIa7aIWGNPfWVyHQVgGhdWUK0HUJdkLZuc7VXxrLrPDSl-vRWVp-vXHaHKW3DzNbCkc24VxfAY1c6KzuUIWwi2m9A&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD">New Panel</option>
-                  <option value="https://script.google.com/macros/s/AKfycbxD9TeEyPyA1Hr6-6yXDnpuQkZAYNzbsvN3WIwChmSLpdNFQA68WnGa4jpBZq5dvCa_Og/exec ">Old Panel</option>
+                className='m-2' onChange={(e) => setPanelUrl(e.target.value)}>
+                <option value="https://script.googleusercontent.com/macros/echo?user_content_key=5Rl60qFjHih-wXiqLkEREf0zR7iUrXOZIYAHaQyge0rtkSlWMR_cXoiBZyR8M_ORAq-zh4JXaiqhpqXFHiEkZC8l4onhOF9wm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnI24BgTL3TIa7aIWGNPfWVyHQVgGhdWUK0HUJdkLZuc7VXxrLrPDSl-vRWVp-vXHaHKW3DzNbCkc24VxfAY1c6KzuUIWwi2m9A&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD">New Panel</option>
+                <option value="https://script.google.com/macros/s/AKfycbxD9TeEyPyA1Hr6-6yXDnpuQkZAYNzbsvN3WIwChmSLpdNFQA68WnGa4jpBZq5dvCa_Og/exec ">Old Panel</option>
               </Form.Select>
             </Nav>
+            <Nav>
+            <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} />} fileName={`labour_charges.pdf`}>
+            {({ blob, url, loading, error }) => {
+              if (loading) {
+                return 'Loading document'
+              } else {
+                return (
+                  <Button
+                    // variant="outline-info"
+                    size='large'>
+                    Download Panel
+                  </Button>
+                )
+              }
+            }
+            }
+          </PDFDownloadLink>
+          </Nav>
             <Nav>
               <Button
                 className='btn-success m-2'
                 onClick={handleShow}
               >
                 Add Item
+              </Button>
+            </Nav>
+            <Nav>
+              <Button
+              variant='info'
+                className='m-2'
+                href="https://docs.google.com/spreadsheets/d/1N9Q7pTWpTSUBjuKpiCdhQN7HBcwM0f0_ry3UC9kNUAA/edit?usp=sharing"
+                target="_blank">
+                New Panel
+              </Button>
+            </Nav>
+            <Nav>
+              <Button
+              variant='dark'
+                className='m-2'
+                href="https://docs.google.com/spreadsheets/d/1Qr1rcwtGwDfMz2TTXxCQaZE7RFPpycKLGGWFy5d3tzE/edit?usp=sharing"
+                target="_blank">
+                Old Panel
               </Button>
             </Nav>
             <Nav>
