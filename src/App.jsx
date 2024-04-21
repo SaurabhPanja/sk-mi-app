@@ -52,8 +52,9 @@ function BillApp() {
             .select()
             .eq('id', id)
           const response = data[0]
-          const { name, address, phone, description, advances } = response
-          setFormData({ name, address, phone, description, advances })
+          console.log(response)
+          const { name, address, phone, description, advances, advancesTotal } = response
+          setFormData({ name, address, phone, description, advances, advancesTotal })
           const billObj = JSON.parse(response['bills'])
           setBill(billObj)
           // console.log(billObj)
@@ -335,7 +336,7 @@ function BillApp() {
             <Form.Control className='mt-2' placeholder='Advances Total' name='advancesTotal' onFocus={() => {
               try {
                 const advancesTotal = eval(formData.advances)
-                // console.log(advancesTotal)
+                console.log(advancesTotal)
                 setFormData((prevState) => ({ ...prevState, advancesTotal }))
               } catch (error) {
                 setFormData((prevState) => ({ ...prevState, advancesTotal: 0 }))

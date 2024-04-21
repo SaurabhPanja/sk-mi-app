@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: '16px',
-    fontWeight: 'bold',marginBottom: 5,
+    fontWeight: 'bold', marginBottom: 5,
     color: '#fff'
   },
   companyInfo: {
@@ -103,33 +103,32 @@ export default ({ bill, formData }) => (
             <Text style={{ width: '20%', ...styles.tableCol }}>{Number(item.total).toLocaleString("en-IN")}</Text>
           </View>
         ))}
-                <View>
-            <View style={styles.tableRow}>
-              <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Total</Text>
-              <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{bill.reduce((accumulator, currentValue) => {
-                return accumulator + Number(currentValue['total']);
-              }, 0).toLocaleString("en-IN")}</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Advance</Text>
-              <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal).toLocaleString("en-IN")}</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={{ width: '80%', fontSize: '18px', ...styles.tableCol }}>Balance</Text>
-              <Text style={{ width: '20%', fontSize: '18px', ...styles.tableCol }}>{bill.reduce((accumulator, currentValue) => {
-                return accumulator + Number(currentValue['total']);
-              }, -1 * formData.advancesTotal).toLocaleString("en-IN")}</Text>
-            </View>
-        </View>
+        <View>
           <View style={styles.tableRow}>
-            <Text>
-            Description
-            </Text>
-            <Text>{formData.description}</Text>
-
-
+            <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Total</Text>
+            <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{bill.reduce((accumulator, currentValue) => {
+              return accumulator + Number(currentValue['total']);
+            }, 0).toLocaleString("en-IN")}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Advance</Text>
+            <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal).toLocaleString("en-IN")}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={{ width: '80%', fontSize: '18px', ...styles.tableCol }}>Balance</Text>
+            <Text style={{ width: '20%', fontSize: '18px', ...styles.tableCol }}>{bill.reduce((accumulator, currentValue) => {
+              return accumulator + Number(currentValue['total']);
+            }, -1 * formData.advancesTotal).toLocaleString("en-IN")}</Text>
+          </View>
         </View>
-
+      </View>
+      <View style={{fontWeight: 'bold'}}>
+        <Text>
+          Description / Advance(s)
+        </Text>
+      </View>
+      <View>
+        <Text>{formData.description}</Text>
       </View>
     </Page>
   </Document>
