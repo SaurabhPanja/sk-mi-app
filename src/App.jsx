@@ -278,8 +278,12 @@ function BillApp() {
                       label: lc['particular']
                     }
                   ))} />
-            </Form.Group>
+                  <div className='text-center'>OR</div>
+                  
+                  <Form.Control type='text' placeholder='Particular' onChange={(e)=>setItemName(e.target.value)}>
 
+                  </Form.Control>
+            </Form.Group>
             <Row>
               <Col>
                 <Form.Group className="mb-3">
@@ -293,7 +297,7 @@ function BillApp() {
               <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>Unit</Form.Label>
-                  <Form.Control type="text" placeholder="Unit" value={unit.toLocaleString("en-IN")} disabled />
+                  <Form.Control type="text" placeholder="Unit" value={unit.toLocaleString("en-IN")} onChange={(e)=>setUnit(e.target.value)} />
                 </Form.Group>
               </Col>
             </Row>
