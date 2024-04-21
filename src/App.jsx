@@ -82,7 +82,7 @@ function BillApp() {
   const handleShow = () => setShow(true);
 
   const calculateTotal = (e) => {
-    setDimension(e.target.value)
+    // setDimension(e.target.value)
     const val = e.target.value.toLowerCase().replaceAll("x", "*")
     try {
 
@@ -226,7 +226,11 @@ function BillApp() {
               <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>Rate</Form.Label>
-                  <Form.Control type="text" placeholder="Rate" value={rate.toLocaleString("en-IN")} disabled />
+                  {/* dynamic rate change */}
+                  <Form.Control type="text" placeholder="Rate" value={rate.toLocaleString("en-IN")} onChange={(e) => {
+                    setRate(e.target.value)
+                    calculateTotal(e)
+                  }} />
                 </Form.Group>
               </Col>
               <Col>
@@ -240,7 +244,10 @@ function BillApp() {
 
             <Form.Group className="mb-3">
               <Form.Label>Dimension</Form.Label>
-              <Form.Control type="text" placeholder="Enter Dimension" onChange={(e) => calculateTotal(e)} disabled={dimensionFieldDisabled} />
+              <Form.Control type="text" placeholder="Enter Dimension" onChange={(e) => {
+                calculateTotal(e)
+                setDimension(e.target.value)
+              }} disabled={dimensionFieldDisabled} />
               {dimensionError && <Form.Text className="text-danger">
                 ** Dimension provided is wrong! Please check again!
               </Form.Text>}
@@ -306,13 +313,13 @@ function BillApp() {
             <Form.Control placeholder="Advances" name='advances' value={formData.advances}
               onChange={handleInputChange}
             />
-            <Form.Control className='mt-2' placeholder='Advances Total' name='advancesTotal' onFocus={()=>{
-              try{
+            <Form.Control className='mt-2' placeholder='Advances Total' name='advancesTotal' onFocus={() => {
+              try {
                 const advancesTotal = eval(formData.advances)
-                console.log(advancesTotal)
-                setFormData((prevState)=>({...prevState, advancesTotal}))
-              }catch(error){
-                setFormData((prevState)=>({...prevState, advancesTotal: 0}))
+                // console.log(advancesTotal)
+                setFormData((prevState) => ({ ...prevState, advancesTotal }))
+              } catch (error) {
+                setFormData((prevState) => ({ ...prevState, advancesTotal: 0 }))
               }
             }} value={Number(formData.advancesTotal).toLocaleString("en-IN")} readOnly />
           </Col>
@@ -357,10 +364,10 @@ function BillApp() {
               </tr>
               <tr key="balance" className='fw-bold'>
                 <td colSpan={5} className='text-end'>Balance</td>
-                <td>₹ 
-                {bill.reduce((accumulator, currentValue) => {
-                  return accumulator + Number(currentValue['total']);
-                }, -1 * formData.advancesTotal).toLocaleString("en-IN")}
+                <td>₹
+                  {bill.reduce((accumulator, currentValue) => {
+                    return accumulator + Number(currentValue['total']);
+                  }, -1 * formData.advancesTotal).toLocaleString("en-IN")}
                 </td>
               </tr>
             </tbody>
