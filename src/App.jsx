@@ -37,6 +37,9 @@ function BillApp() {
   });
   const [panelUrl, setPanelUrl] = useState("https://script.googleusercontent.com/macros/echo?user_content_key=5Rl60qFjHih-wXiqLkEREf0zR7iUrXOZIYAHaQyge0rtkSlWMR_cXoiBZyR8M_ORAq-zh4JXaiqhpqXFHiEkZC8l4onhOF9wm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnI24BgTL3TIa7aIWGNPfWVyHQVgGhdWUK0HUJdkLZuc7VXxrLrPDSl-vRWVp-vXHaHKW3DzNbCkc24VxfAY1c6KzuUIWwi2m9A&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD")
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
 
@@ -143,10 +146,26 @@ function BillApp() {
     handleClose()
   }
 
+  const openDeleteModal = (itemId) => {
+    setItemToDelete(itemId);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setItemToDelete(null);
+    setShowDeleteModal(false);
+  };
+
   const deleteItem = (idToDelete) => {
     setBill(prevState => prevState.filter(item => item.id !== idToDelete));
   };
 
+  const handleParticularChange = (index, newValue) =>{
+    const updatedBillItems = [...bill]
+    updatedBillItems[index - 1].itemName = newValue
+
+    setBill(updatedBillItems)
+  }
   const handleDimensionChange = (index, newValue) => {
     // Create a copy of the billItems array
     // console.log("Executed!")
@@ -197,24 +216,25 @@ function BillApp() {
                 <option value="https://script.google.com/macros/s/AKfycbxD9TeEyPyA1Hr6-6yXDnpuQkZAYNzbsvN3WIwChmSLpdNFQA68WnGa4jpBZq5dvCa_Og/exec ">Old Panel</option>
               </Form.Select>
             </Nav>
-            <Nav>
             <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} />} fileName={`labour_charges.pdf`}>
             {({ blob, url, loading, error }) => {
               if (loading) {
                 return 'Loading document'
               } else {
                 return (
+                  <Nav>
+
                   <Button
                     // variant="outline-info"
                     size='large'>
                     Download Panel
                   </Button>
+            </Nav>
                 )
               }
             }
             }
           </PDFDownloadLink>
-          </Nav>
             <Nav>
               <Button
                 className='btn-success m-2'
@@ -255,6 +275,20 @@ function BillApp() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <Modal show={showDeleteModal} onHide={closeDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeDeleteModal}>
+            No
+          </Button>
+          <Button variant="danger" onClick={() => { deleteItem(itemToDelete); closeDeleteModal(); }}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add Item</Modal.Title>
@@ -403,13 +437,15 @@ function BillApp() {
               {bill.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   <td>{row.id}</td>
-                  <td>{row.itemName}</td>
+                  <td>
+                  <Form.Control type="text" value={row.itemName} onChange={(e) => handleParticularChange(row.id, e.target.value)} />
+                  </td>
                   <td>
                     <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
                   </td>
                   <td>₹ {row.rate}</td>
                   <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
-                  <td><Button variant='outline-danger' onClick={() => deleteItem(row.id)}>Delete</Button></td>
+                  <td><Button variant='outline-danger' onClick={() => openDeleteModal(row.id)}>Delete</Button></td>
                 </tr>
               ))}
               <tr key="total">
