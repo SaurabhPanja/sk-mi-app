@@ -93,7 +93,7 @@ export default ({ labourCharges }) => {
             </View>
             {currentPage.map((item, idx) => (
               <View style={styles.tableRow} key={`item-${idx}`}>
-                <Text style={{ width: '5%', ...styles.tableCol }}>&nbsp;{idx + 1}</Text>
+                <Text style={{ width: '5%', ...styles.tableCol }}>&nbsp;{idx + 1 +  pages.length * itemsPerPage}</Text>
                 <Text style={{ width: '50%', ...styles.tableCol }}>&nbsp;{item.particular}</Text>
                 <Text style={{ width: '20%', ...styles.tableCol }}>&nbsp;{item.unit}</Text>
                 <Text style={{ width: '25%', ...styles.tableCol }}>&nbsp;{item.rate}</Text>
