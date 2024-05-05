@@ -426,12 +426,12 @@ function BillApp() {
                 <tr key={rowIndex}>
                   <td>{row.id}</td>
                   <td>
-                  <Form.Control type="text" value={row.itemName} onChange={(e) => handleParticularChange(row.id, e.target.value)} />
+                  <Form.Control type="text" value={row.itemName} style={{minWidth: "175px"}} onChange={(e) => handleParticularChange(row.id, e.target.value)} />
                   </td>
                   <td>
                     <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
                   </td>
-                  <td>₹ {row.rate}</td>
+                  <td  style={{minWidth: "60px"}}>₹ {row.rate}</td>
                   <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
                   <td><Button variant='outline-danger' onClick={() => openDeleteModal(row.id)}>Delete</Button></td>
                 </tr>
@@ -444,7 +444,7 @@ function BillApp() {
               </tr>
               <tr key="advance">
                 <td colSpan={5} className='text-end'>Advance</td>
-                <td>₹ {Number(formData.advancesTotal).toLocaleString("en-IN")}</td>
+                <td style={{minWidth: "100px"}}>₹ {Number(formData.advancesTotal).toLocaleString("en-IN")}</td>
               </tr>
               <tr key="balance" className='fw-bold'>
                 <td colSpan={5} className='text-end'>Balance</td>
