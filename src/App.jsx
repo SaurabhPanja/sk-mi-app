@@ -15,6 +15,7 @@ import { supabase } from './supabase';
 
 import InvoicePDF from './InvoicePdf';
 import LabourChargesPdf from './LabourChargesPdf';
+import Loader from './Loader';
 
 function BillApp() {
   const [labourCharges, setLabourCharges] = useState([])
@@ -39,12 +40,14 @@ function BillApp() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isloading, setIsloading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
 
       try {
         // Get the id parameter from the URL
+        setIsloading(true)
         const id = window.location.pathname.split('/').pop();
 
         // Make sure id is present before making the API call
@@ -63,6 +66,7 @@ function BillApp() {
           setBill(billObj)
           // console.log(billObj)
         }
+        setIsloading(false)
       } catch (error) {
         console.log("Error while fetching data from supabase " + error)
       }
@@ -106,26 +110,6 @@ function BillApp() {
     }
 
   }, [rate, dimension])
-
-  // const calculateTotal = () => {
-  //   // setDimension(e.target.value)
-  //   const val = dimension.toLowerCase().replaceAll("x", "*")
-  //   try {
-
-  //     const evalVal = eval(val)
-  //     const roundOffTotal = rate * evalVal
-  //     setItemTotal(prevTotal => {
-  //       if (isNaN(roundOffTotal)) {
-  //         return 0
-  //       } else {
-  //         return roundOffTotal.toFixed(2)
-  //       }
-  //     })
-  //     setDimensionError(false)
-  //   } catch (error) {
-  //     setDimensionError(true)
-  //   }
-  // }
 
   const addItem = () => {
     setBill(prevBill => {
@@ -194,15 +178,19 @@ function BillApp() {
   useEffect(() => {
     async function fetchData() {
       // You can await here
+      setIsloading(true)
       // const url = "https://script.googleusercontent.com/macros/echo?user_content_key=5Rl60qFjHih-wXiqLkEREf0zR7iUrXOZIYAHaQyge0rtkSlWMR_cXoiBZyR8M_ORAq-zh4JXaiqhpqXFHiEkZC8l4onhOF9wm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnI24BgTL3TIa7aIWGNPfWVyHQVgGhdWUK0HUJdkLZuc7VXxrLrPDSl-vRWVp-vXHaHKW3DzNbCkc24VxfAY1c6KzuUIWwi2m9A&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD"
       const response = await fetch(panelUrl);
       const result = await response.json();
       setLabourCharges(result.data)
+      setIsloading(false)
     }
     fetchData();
   }, [panelUrl])
 
   return (
+    <>
+    {isloading && <Loader/> }
     <Container>
       <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
         <Container>
@@ -503,6 +491,7 @@ function BillApp() {
 
       </Row>
     </Container>
+    </>
   );
 }
 
