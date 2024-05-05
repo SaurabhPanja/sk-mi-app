@@ -7,7 +7,8 @@ Font.register(
 
 const styles = StyleSheet.create({
   page: {
-    margin: '5px',
+    // margin: '5px',
+    padding: '20px',
     fontSize: '12px',
     width: '100px',
     fontFamily: 'opensans'
