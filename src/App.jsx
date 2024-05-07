@@ -150,6 +150,32 @@ function BillApp() {
 
     setBill(updatedBillItems)
   }
+
+  const handleRateChange = (index, newValue) => {
+    // Create a copy of the billItems array
+    // console.log("Executed!")
+    const updatedBillItems = [...bill];
+    // Update the dimension of the item at the specified index
+    // console.log(updatedBillItems[index])
+    updatedBillItems[index - 1].rate = newValue
+    let evalVal = 0
+    try {
+
+      const val = updatedBillItems[index - 1].dimension.toLowerCase().replaceAll("x", "*")
+      evalVal = eval(val)
+    } catch (erro) {
+      evalVal = NaN
+    }
+    // console.log(evalVal)
+    const roundOffTotal = updatedBillItems[index - 1].rate * evalVal
+
+    updatedBillItems[index - 1].total = roundOffTotal.toFixed(2)
+    // console.log(updatedBillItems)
+    // Update the state with the modified array
+    // console.log(updatedBillItems)
+    setBill(updatedBillItems);
+  };
+
   const handleDimensionChange = (index, newValue) => {
     // Create a copy of the billItems array
     // console.log("Executed!")
@@ -431,7 +457,9 @@ function BillApp() {
                   <td>
                     <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
                   </td>
-                  <td  style={{minWidth: "60px"}}>₹ {row.rate}</td>
+                  <td  style={{minWidth: "60px"}}>
+                  <Form.Control type="text" value={row.rate} onChange={(e) => handleRateChange(row.id, e.target.value)} />
+                  </td>
                   <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
                   <td><Button variant='outline-danger' onClick={() => openDeleteModal(row.id)}>Delete</Button></td>
                 </tr>
