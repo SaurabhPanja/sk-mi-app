@@ -457,10 +457,10 @@ function BillApp() {
                   <td>
                     <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
                   </td>
-                  <td  style={{minWidth: "60px"}}>
+                  <td  style={{minWidth: "80px"}}>
                   <Form.Control type="text" value={row.rate} onChange={(e) => handleRateChange(row.id, e.target.value)} />
                   </td>
-                  <td>₹ {Number(row.total).toLocaleString("en-IN")}</td>
+                  <td>{Number(row.total).toLocaleString("en-IN")}</td>
                   <td><Button variant='outline-danger' onClick={() => openDeleteModal(row.id)}>Delete</Button></td>
                 </tr>
               ))}
