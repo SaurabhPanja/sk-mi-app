@@ -294,13 +294,11 @@ function BillApp() {
                 }
               </PDFDownloadLink>
               <Nav>
-                <Button
-                  className='btn-success m-2'
-                  onClick={handleShow}
-                >
-                  Add Item
+                <Button variant='danger' className='m-2' onClick={handleResetClick}>
+                  Reset
                 </Button>
               </Nav>
+
               <Nav>
                 <Button
                   variant='info'
@@ -331,29 +329,33 @@ function BillApp() {
 
               </Nav>
               <Nav>
-      <Button variant='danger' className='m-2' onClick={handleResetClick}>
-        Reset
-      </Button>
-    </Nav>
+                <Button
+                  className='btn-success m-2'
+                  onClick={handleShow}
+                >
+                  Add Item
+                </Button>
+              </Nav>
+
             </Navbar.Collapse>
           </Container>
         </Navbar>
         <Modal show={showResetModal} onHide={handleResetCancel}>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirm Reset</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        Are you sure you want to reset the data? This action cannot be undone.
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant='secondary' onClick={handleResetCancel}>
-          Cancel
-        </Button>
-        <Button variant='danger' onClick={handleResetConfirm}>
-          Reset
-        </Button>
-      </Modal.Footer>
-    </Modal>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Reset</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to reset the data? This action cannot be undone.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant='secondary' onClick={handleResetCancel}>
+              Cancel
+            </Button>
+            <Button variant='danger' onClick={handleResetConfirm}>
+              Reset
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Modal show={showDeleteModal} onHide={closeDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Confirm Deletion</Modal.Title>
