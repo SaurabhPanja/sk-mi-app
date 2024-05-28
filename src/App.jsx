@@ -65,6 +65,17 @@ function BillApp() {
           const billObj = JSON.parse(response['bills'])
           setBill(billObj)
           // console.log(billObj)
+        }else{
+          const storedFormData = localStorage.getItem('formData');
+          if (storedFormData) {
+            setFormData(JSON.parse(storedFormData));
+          }
+
+          const storedBill = localStorage.getItem('bill');
+          if (storedBill) {
+            setBill(JSON.parse(storedBill));
+          }
+    
         }
         setIsloading(false)
       } catch (error) {
@@ -110,6 +121,14 @@ function BillApp() {
     }
 
   }, [rate, dimension])
+
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
+  
+  useEffect(() => {
+    localStorage.setItem('bill', JSON.stringify(bill));
+  }, [bill]);
 
   const addItem = () => {
     setBill(prevBill => {
