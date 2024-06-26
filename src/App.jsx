@@ -84,7 +84,6 @@ function BillApp() {
             .select()
             .eq('id', id)
           const response = data[0]
-          console.log(response)
           const { name, address, phone, description, advances, advancesTotal } = response
           setFormData({ name, address, phone, description, advances, advancesTotal })
           const billObj = JSON.parse(response['bills'])
@@ -189,8 +188,9 @@ function BillApp() {
   };
 
   const handleParticularChange = (index, newValue) => {
+    console.log(index, newValue)
     const updatedBillItems = [...bill]
-    updatedBillItems[index - 1].itemName = newValue
+    updatedBillItems[index ].itemName = newValue
 
     setBill(updatedBillItems)
   }
@@ -201,19 +201,19 @@ function BillApp() {
     const updatedBillItems = [...bill];
     // Update the dimension of the item at the specified index
     // console.log(updatedBillItems[index])
-    updatedBillItems[index - 1].rate = newValue
+    updatedBillItems[index ].rate = newValue
     let evalVal = 0
     try {
 
-      const val = updatedBillItems[index - 1].dimension.toLowerCase().replaceAll("x", "*")
+      const val = updatedBillItems[index ].dimension.toLowerCase().replaceAll("x", "*")
       evalVal = eval(val)
     } catch (erro) {
       evalVal = NaN
     }
     // console.log(evalVal)
-    const roundOffTotal = updatedBillItems[index - 1].rate * evalVal
+    const roundOffTotal = updatedBillItems[index ].rate * evalVal
 
-    updatedBillItems[index - 1].total = roundOffTotal.toFixed(2)
+    updatedBillItems[index ].total = roundOffTotal.toFixed(2)
     // console.log(updatedBillItems)
     // Update the state with the modified array
     // console.log(updatedBillItems)
@@ -226,7 +226,7 @@ function BillApp() {
     const updatedBillItems = [...bill];
     // Update the dimension of the item at the specified index
     // console.log(updatedBillItems[index])
-    updatedBillItems[index - 1].dimension = newValue
+    updatedBillItems[index ].dimension = newValue
     let evalVal = 0
     try {
 
@@ -236,9 +236,9 @@ function BillApp() {
       evalVal = NaN
     }
     // console.log(evalVal)
-    const roundOffTotal = updatedBillItems[index - 1].rate * evalVal
+    const roundOffTotal = updatedBillItems[index ].rate * evalVal
 
-    updatedBillItems[index - 1].total = roundOffTotal.toFixed(2)
+    updatedBillItems[index ].total = roundOffTotal.toFixed(2)
     // console.log(updatedBillItems)
     // Update the state with the modified array
     // console.log(updatedBillItems)
@@ -517,15 +517,15 @@ function BillApp() {
               <tbody>
                 {bill.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    <td>{row.id}</td>
+                    <td>{rowIndex + 1}</td>
                     <td>
-                      <Form.Control type="text" value={row.itemName} style={{ minWidth: "175px" }} onChange={(e) => handleParticularChange(row.id, e.target.value)} />
+                      <Form.Control type="text" value={row.itemName} style={{ minWidth: "175px" }} onChange={(e) => handleParticularChange(rowIndex, e.target.value)} />
                     </td>
                     <td>
-                      <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(row.id, e.target.value)} />
+                      <Form.Control type="text" value={row.dimension} onChange={(e) => handleDimensionChange(rowIndex, e.target.value)} />
                     </td>
                     <td style={{ minWidth: "80px" }}>
-                      <Form.Control type="text" value={row.rate} onChange={(e) => handleRateChange(row.id, e.target.value)} />
+                      <Form.Control type="text" value={row.rate} onChange={(e) => handleRateChange(rowIndex, e.target.value)} />
                     </td>
                     <td>{Number(row.total).toLocaleString("en-IN")}</td>
                     <td><Button variant='outline-danger' onClick={() => openDeleteModal(row.id)}>Delete</Button></td>
