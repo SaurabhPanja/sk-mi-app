@@ -1,28 +1,28 @@
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { APP_CONFIG, PDF_STYLES } from './constants/config';
 
 Font.register({
-  family: 'opensans',
+  family: PDF_STYLES.FONT_FAMILY,
   src: '/fonts/opensans.ttf'
 });
 
 const styles = StyleSheet.create({
   page: {
-    // margin: '5px',
-    padding: '20px',
-    fontSize: '12px',
-    fontFamily: 'opensans'
+    padding: PDF_STYLES.PAGE_PADDING,
+    fontSize: PDF_STYLES.FONT_SIZE,
+    fontFamily: PDF_STYLES.FONT_FAMILY
   },
   header: {
-    backgroundColor: "#00BFFE",
+    backgroundColor: PDF_STYLES.PRIMARY_COLOR,
     fontWeight: 'bold',
     color: '#fff',
     height: "60px",
-    // fontSize: "36px",
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '0 20px'
+    padding: '0 20px',
+    marginBottom: 10,
   },
   title: {
     fontSize: '24px',
@@ -32,9 +32,6 @@ const styles = StyleSheet.create({
   companyInfo: {
     marginBottom: 5,
     color: "#fff"
-  },
-  invoiceDetails: {
-    marginBottom: 5,
   },
   table: {
     display: 'table',
@@ -53,28 +50,56 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderBottomWidth: 1,
     borderRightWidth: 1,
-    padding: 2,
+    padding: 5,
   },
   tableHeader: {
     fontWeight: 'bold',
-    backgroundColor: '#ddd',
+    backgroundColor: PDF_STYLES.SECONDARY_COLOR,
   },
-  partyLeft: {
-    fontWeight: 'bold',
-    width: '80%'
+  pageNumber: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    fontSize: 10,
+    color: '#666',
   }
 });
 
 const InvoiceHeader = () => (
   <View style={styles.header}>
-    <Text style={{ width: '33%', textAlign: 'left' }}>Mob no: 9898832796</Text>
-    <Text style={styles.title}>SK Maidul Islam</Text>
-    <Text style={{ width: '33%', textAlign: 'right' }}>Nadiad &nbsp;&nbsp;</Text>
+    <Text style={{ width: '33%', textAlign: 'left' }}>
+      Mob: {APP_CONFIG.COMPANY_PHONE}
+    </Text>
+    <Text style={styles.title}>{APP_CONFIG.COMPANY_NAME}</Text>
+    <Text style={{ width: '33%', textAlign: 'right' }}>
+      {APP_CONFIG.COMPANY_ADDRESS.split(',')[0]}
+    </Text>
+  </View>
+);
+
+const LabourChargesTable = ({ labourCharges, pageIndex }) => (
+  <View style={styles.table}>
+    <View style={[styles.tableRow, styles.tableHeader]}>
+      <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
+      <Text style={{ width: '50%', ...styles.tableCol }}>Particular</Text>
+      <Text style={{ width: '20%', ...styles.tableCol }}>Sqf/R.feet</Text>
+      <Text style={{ width: '25%', ...styles.tableCol }}>Rate</Text>
+    </View>
+    {labourCharges.map((item, idx) => (
+      <View style={styles.tableRow} key={`item-${pageIndex}-${idx}`}>
+        <Text style={{ width: '5%', ...styles.tableCol }}>
+          {idx + 1 + (pageIndex * APP_CONFIG.MAX_LABOUR_CHARGES_PER_PAGE)}
+        </Text>
+        <Text style={{ width: '50%', ...styles.tableCol }}>{item.particular}</Text>
+        <Text style={{ width: '20%', ...styles.tableCol }}>{item.unit}</Text>
+        <Text style={{ width: '25%', ...styles.tableCol }}>{item.rate}</Text>
+      </View>
+    ))}
   </View>
 );
 
 export default ({ labourCharges }) => {
-  const itemsPerPage = 32;
+  const itemsPerPage = APP_CONFIG.MAX_LABOUR_CHARGES_PER_PAGE;
   const pages = [];
   let currentPage = [];
 
@@ -85,22 +110,13 @@ export default ({ labourCharges }) => {
       pages.push(
         <Page style={styles.page} key={`page-${pages.length}`}>
           <InvoiceHeader />
-          <View style={styles.table}>
-            <View style={[styles.tableRow, styles.tableHeader]}>
-              <Text style={{ width: '5%', ...styles.tableCol }}>&nbsp; #</Text>
-              <Text style={{ width: '50%', ...styles.tableCol }}>&nbsp; Particular</Text>
-              <Text style={{ width: '20%', ...styles.tableCol }}>&nbsp; Sqf/R.feet</Text>
-              <Text style={{ width: '25%', ...styles.tableCol }}>&nbsp; Rate</Text>
-            </View>
-            {currentPage.map((item, idx) => (
-              <View style={styles.tableRow} key={`item-${idx}`}>
-                <Text style={{ width: '5%', ...styles.tableCol }}>&nbsp;{idx + 1 +  pages.length * itemsPerPage}</Text>
-                <Text style={{ width: '50%', ...styles.tableCol }}>&nbsp;{item.particular}</Text>
-                <Text style={{ width: '20%', ...styles.tableCol }}>&nbsp;{item.unit}</Text>
-                <Text style={{ width: '25%', ...styles.tableCol }}>&nbsp;{item.rate}</Text>
-              </View>
-            ))}
-          </View>
+          <LabourChargesTable 
+            labourCharges={currentPage} 
+            pageIndex={pages.length} 
+          />
+          <Text style={styles.pageNumber}>
+            Page {pages.length + 1} of {Math.ceil(labourCharges.length / itemsPerPage)}
+          </Text>
         </Page>
       );
       currentPage = [];

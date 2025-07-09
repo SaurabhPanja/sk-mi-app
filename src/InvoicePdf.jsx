@@ -1,34 +1,39 @@
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { APP_CONFIG, PDF_STYLES } from './constants/config';
 
-const MAX_ITEM_TABLE = 25
-
-Font.register(
-  { family: 'opensans', src: '/fonts/opensans.ttf' })
+Font.register({
+  family: PDF_STYLES.FONT_FAMILY,
+  src: '/fonts/opensans.ttf'
+});
 
 const styles = StyleSheet.create({
   page: {
-    // margin: '5px',
-    padding: '20px',
-    fontSize: '12px',
-    width: '100px',
-    fontFamily: 'opensans'
+    padding: PDF_STYLES.PAGE_PADDING,
+    fontSize: PDF_STYLES.FONT_SIZE,
+    fontFamily: PDF_STYLES.FONT_FAMILY
   },
   header: {
     marginBottom: 5,
     textAlign: 'center',
-    backgroundColor: "#00BFFE",
+    backgroundColor: PDF_STYLES.PRIMARY_COLOR,
+    padding: '10px 0',
   },
   title: {
     fontSize: '16px',
-    fontWeight: 'bold', marginBottom: 5,
+    fontWeight: 'bold',
+    marginBottom: 5,
     color: '#fff'
   },
   companyInfo: {
     marginBottom: 5,
-    color: "#fff"
+    color: "#fff",
+    fontSize: '10px'
   },
-  invoiceDetails: {
-    marginBottom: 5,
+  customerInfo: {
+    marginBottom: 10,
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: 5,
   },
   table: {
     display: 'table',
@@ -47,37 +52,141 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderBottomWidth: 1,
     borderRightWidth: 1,
-    padding: 2,
+    padding: 5,
   },
   tableHeader: {
     fontWeight: 'bold',
-    backgroundColor: '#ddd',
+    backgroundColor: PDF_STYLES.SECONDARY_COLOR,
   },
-  partyLeft: {
+  totalsSection: {
+    marginTop: 10,
+    borderTop: '1px solid #ddd',
+    paddingTop: 10,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  totalLabel: {
+    width: '80%',
+    fontSize: '12px',
     fontWeight: 'bold',
-    width: '80%'
+  },
+  totalValue: {
+    width: '20%',
+    fontSize: '12px',
+    fontWeight: 'bold',
+  },
+  balanceRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+    paddingTop: 10,
+    borderTop: '1px solid #000',
+  },
+  description: {
+    marginTop: 15,
+    padding: 10,
+    border: '1px solid #ddd',
+    borderRadius: 5,
+  },
+  descriptionTitle: {
+    fontWeight: 'bold',
+    marginBottom: 5,
   }
 });
 
 const InvoiceHeader = () => (
   <View style={styles.header}>
     <View style={styles.title}>
-      <Text>SK Maidul Islam</Text>
+      <Text>{APP_CONFIG.COMPANY_NAME}</Text>
     </View>
     <View style={styles.companyInfo}>
-      <Text>D 27 Abdullah Park, Nadiad</Text>
-      <Text>Phone no & G Pay: 9898832796 Email: skmaidulsk@gmail.com</Text>
+      <Text>{APP_CONFIG.COMPANY_ADDRESS}</Text>
+      <Text>Phone: {APP_CONFIG.COMPANY_PHONE} | Email: {APP_CONFIG.COMPANY_EMAIL}</Text>
+    </View>
+  </View>
+);
+
+const CustomerInfo = ({ formData }) => (
+  <View style={styles.customerInfo}>
+    <View style={styles.tableRow}>
+      <View style={{ flexGrow: 1.5, fontWeight: '800' }}>
+        <Text>{formData.name || 'N/A'}</Text>
+        <Text>{formData.address || 'N/A'}</Text>
+        <Text>{formData.phone || 'N/A'}</Text>
+      </View>
+      <View style={{ flexGrow: 1 }}>
+        <Text>Date: {new Date().toLocaleDateString('en-IN')}</Text>
+      </View>
     </View>
   </View>
 );
 
 const splitBillItems = (bill) => {
   const billPages = [];
-  for (let i = 0; i < bill.length; i += MAX_ITEM_TABLE) {
-    billPages.push(bill.slice(i, i + MAX_ITEM_TABLE));
+  for (let i = 0; i < bill.length; i += APP_CONFIG.MAX_ITEMS_PER_PAGE) {
+    billPages.push(bill.slice(i, i + APP_CONFIG.MAX_ITEMS_PER_PAGE));
   }
   return billPages;
 };
+
+const InvoiceTable = ({ billPage, pageIndex }) => (
+  <View style={styles.table}>
+    <View style={[styles.tableRow, styles.tableHeader]}>
+      <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
+      <Text style={{ width: '45%', ...styles.tableCol }}>Item Name</Text>
+      <Text style={{ width: '20%', ...styles.tableCol }}>Dimension</Text>
+      <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
+      <Text style={{ width: '20%', ...styles.tableCol }}>Total</Text>
+    </View>
+    {billPage.map((item, itemIndex) => (
+      <View style={styles.tableRow} key={`${pageIndex}-${itemIndex}`}>
+        <Text style={{ width: '5%', ...styles.tableCol }}>
+          {itemIndex + 1 + (pageIndex * APP_CONFIG.MAX_ITEMS_PER_PAGE)}
+        </Text>
+        <Text style={{ width: '45%', ...styles.tableCol }}>{item.itemName}</Text>
+        <Text style={{ width: '20%', ...styles.tableCol }}>{item.dimension}</Text>
+        <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
+        <Text style={{ width: '20%', ...styles.tableCol }}>
+          {Number(item.total).toLocaleString("en-IN")}
+        </Text>
+      </View>
+    ))}
+  </View>
+);
+
+const InvoiceTotals = ({ billPages, formData }) => {
+  const totalAmount = billPages.reduce((accumulator, currentPage) => {
+    return accumulator + currentPage.reduce((accum, curr) => accum + Number(curr.total), 0);
+  }, 0);
+
+  const advanceAmount = Number(formData.advancesTotal) || 0;
+  const balanceAmount = totalAmount - advanceAmount;
+
+  return (
+    <View style={styles.totalsSection}>
+      <View style={styles.totalRow}>
+        <Text style={styles.totalLabel}>Total</Text>
+        <Text style={styles.totalValue}>{totalAmount.toLocaleString("en-IN")}</Text>
+      </View>
+      <View style={styles.totalRow}>
+        <Text style={styles.totalLabel}>Advance</Text>
+        <Text style={styles.totalValue}>{advanceAmount.toLocaleString("en-IN")}</Text>
+      </View>
+      <View style={styles.balanceRow}>
+        <Text style={styles.totalLabel}>Balance</Text>
+        <Text style={styles.totalValue}>{balanceAmount.toLocaleString("en-IN")}</Text>
+      </View>
+    </View>
+  );
+};
+
+const InvoiceDescription = ({ formData }) => (
+  <View style={styles.description}>
+    <Text style={styles.descriptionTitle}>Description / Advance(s)</Text>
+    <Text>{formData.description || 'No description provided'}</Text>
+  </View>
+);
 
 export default ({ bill, formData }) => {
   const billPages = splitBillItems(bill);
@@ -87,62 +196,13 @@ export default ({ bill, formData }) => {
       {billPages.map((billPage, index) => (
         <Page style={styles.page} key={index}>
           <InvoiceHeader />
-          <View style={styles.tableRow}>
-            <View style={{ flexGrow: 1.5, fontWeight: '800' }}>
-              <Text>{formData.name}</Text>
-              <Text>{formData.address}</Text>
-              <Text>{formData.phone}</Text>
-            </View>
-            <View style={{ flexGrow: 1 }}>
-              <Text style={{ width: '30%' }}>{new Date().toLocaleString('en-IN')}</Text>
-            </View>
-          </View>
-          <View style={styles.table}>
-            <View style={[styles.tableRow, styles.tableHeader]}>
-              <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
-              <Text style={{ width: '45%', ...styles.tableCol }}>Item Name</Text>
-              <Text style={{ width: '20%', ...styles.tableCol }}>Dimension</Text>
-              <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
-              <Text style={{ width: '20%', ...styles.tableCol }}>Total</Text>
-            </View>
-            {billPage.map((item, itemIndex) => (
-              <View style={styles.tableRow} key={`${index}-${itemIndex}`}>
-                <Text style={{ width: '5%', ...styles.tableCol }}>{itemIndex + 1 + (index * MAX_ITEM_TABLE)}</Text>
-                <Text style={{ width: '45%', ...styles.tableCol }}>{item.itemName}</Text>
-                <Text style={{ width: '20%', ...styles.tableCol }}>{item.dimension}</Text>
-                <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
-                <Text style={{ width: '20%', ...styles.tableCol }}>{Number(item.total).toLocaleString("en-IN")}</Text>
-              </View>
-            ))}
-          </View>
+          <CustomerInfo formData={formData} />
+          <InvoiceTable billPage={billPage} pageIndex={index} />
+          
           {index === billPages.length - 1 && (
             <>
-              <View>
-                <View style={styles.tableRow}>
-                  <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Total</Text>
-                  <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{billPages.reduce((accumulator, currentPage) => {
-                    return accumulator + currentPage.reduce((accum, curr) => accum + Number(curr.total), 0);
-                  }, 0).toLocaleString("en-IN")}</Text>
-                </View>
-                <View style={styles.tableRow}>
-                  <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Advance</Text>
-                  <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal).toLocaleString("en-IN")}</Text>
-                </View>
-                <View style={styles.tableRow}>
-                  <Text style={{ width: '80%', fontSize: '18px', ...styles.tableCol }}>Balance</Text>
-                  <Text style={{ width: '20%', fontSize: '18px', ...styles.tableCol }}>{billPages.reduce((accumulator, currentPage) => {
-                    return accumulator + currentPage.reduce((accum, curr) => accum + Number(curr.total), 0);
-                  }, -1 * formData.advancesTotal).toLocaleString("en-IN")}</Text>
-                </View>
-              </View>
-              <View style={{ fontWeight: 'bold' }}>
-                <Text>
-                  Description / Advance(s)
-                </Text>
-              </View>
-              <View>
-                <Text>{formData.description}</Text>
-              </View>
+              <InvoiceTotals billPages={billPages} formData={formData} />
+              <InvoiceDescription formData={formData} />
             </>
           )}
         </Page>
