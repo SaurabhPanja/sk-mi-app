@@ -36,7 +36,7 @@ function BillApp() {
     advances: '',
     advancesTotal: ''
   });
-  const [panelUrl, setPanelUrl] = useState("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhk610WZEciUl9k_dsCVTN5kZCrBX5sL-aLEI691oRD7A7Eqhlk20PrTesyWFXacb1pOnMvjSTb9wUYHxUvYZK8vbiBpZsGT2Df-EPerpabo3Pj9kEFxafaZ_fNynAU3fAfGZZjvJfnnWKQ__4WDo2MymOWT2H9drYWphx-jiBd0tlCNjhHO6XJqD2OaCaencRamTmRe4KUXESZOsRkEyPwd02nd41fjJxy8-12ae4Ur_6QQPlSS1W5M4a2_141RarYF3gqqqHOi1QpXLLtPrbXX6qtLA&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD")
+  const [panelUrl, setPanelUrl] = useState("https://script.googleusercontent.com/macros/echo?user_content_key=5Rl60qFjHih-wXiqLkEREf0zR7iUrXOZIYAHaQyge0rtkSlWMR_cXoiBZyR8M_ORAq-zh4JXaiqhpqXFHiEkZC8l4onhOF9wm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnI24BgTL3TIa7aIWGNPfWVyHQVgGhdWUK0HUJdkLZuc7VXxrLrPDSl-vRWVp-vXHaHKW3DzNbCkc24VxfAY1c6KzuUIWwi2m9A&lib=Mzmx6W9F8y-HD-Fdgh0tAcmZ55HFYViQD")
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
