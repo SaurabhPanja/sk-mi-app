@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 5,
     textAlign: 'center',
-    backgroundColor: "#00BFFE",
+    backgroundColor: "#B19CD9",
   },
   title: {
     fontSize: '16px',
@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
 const InvoiceHeader = () => (
   <View style={styles.header}>
     <View style={styles.title}>
-      <Text>SK Maidul Islam</Text>
+      <Text>Rizwan Bhai POP</Text>
     </View>
     <View style={styles.companyInfo}>
-      <Text>D 27 Abdullah Park, Nadiad</Text>
-      <Text>Phone no & G Pay: 9898832796 Email: skmaidulsk@gmail.com</Text>
+      <Text>Faijan park 2 bhoja talaoudi</Text>
+      <Text>Phone no.: 9725955463 Email: rijwansiddiki2450@gmail.com</Text>
     </View>
   </View>
 );

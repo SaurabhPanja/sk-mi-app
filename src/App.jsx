@@ -80,7 +80,7 @@ function BillApp() {
           // Make your API call here
 
           const { data, error } = await supabase
-            .from('histories')
+            .from('histories_new')
             .select()
             .eq('id', id)
           const response = data[0]
@@ -264,7 +264,7 @@ function BillApp() {
       <Container>
         <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
           <Container>
-            <Navbar.Brand href="/" className='text-danger fw-bold'>S K Maidul Islam</Navbar.Brand>
+            <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
@@ -565,7 +565,7 @@ function BillApp() {
                       onClick={async () => {
                         // console.log({ ...formData, bills: JSON.stringify(bill) })
                         const { error } = await supabase
-                          .from('histories')
+                          .from('histories_new')
                           .insert({ ...formData, bills: JSON.stringify(bill) });
 
                         if (error) {

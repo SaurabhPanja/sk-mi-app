@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     fontFamily: 'opensans'
   },
   header: {
-    backgroundColor: "#00BFFE",
+    backgroundColor: "#B19CD9",
     fontWeight: 'bold',
     color: '#fff',
     height: "60px",
@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
 
 const InvoiceHeader = () => (
   <View style={styles.header}>
-    <Text style={{ width: '33%', textAlign: 'left' }}>Mob no: 9898832796</Text>
-    <Text style={styles.title}>SK Maidul Islam</Text>
-    <Text style={{ width: '33%', textAlign: 'right' }}>Nadiad &nbsp;&nbsp;</Text>
+    <Text style={{ width: '33%', textAlign: 'left' }}>Phone no.: 9725955463</Text>
+    <Text style={styles.title}>Rizwan Bhai POP</Text>
+    <Text style={{ width: '33%', textAlign: 'right' }}>Faijan park 2 bhoja talaoudi &nbsp;&nbsp;</Text>
   </View>
 );
 

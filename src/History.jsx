@@ -25,7 +25,7 @@ const HistoryList = () => {
     const fetchHistories = async () => {
         try {
             const { data, error } = await supabase
-                .from('histories')
+                .from('histories_new')
                 .select()
                 .order('created_at', { ascending: false });
 
@@ -53,7 +53,7 @@ const HistoryList = () => {
     const handleDeleteConfirm = async () => {
         try {
             const { error } = await supabase
-                .from('histories')
+                .from('histories_new')
                 .delete()
                 .match({ id: selectedHistoryId });
 
@@ -79,7 +79,7 @@ const HistoryList = () => {
         <Container>
             <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
                 <Container>
-                    <Navbar.Brand href="/" className='text-danger fw-bold'>S K Maidul Islam</Navbar.Brand>
+                    <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav>
