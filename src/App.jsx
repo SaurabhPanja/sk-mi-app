@@ -36,7 +36,7 @@ function BillApp() {
     advances: '',
     advancesTotal: ''
   });
-  const [panelUrl, setPanelUrl] = useState("https://script.google.com/macros/s/AKfycbzvz-WpddVlSK0urKKQwAAl9upvXW2sXW_yUqmML-28umrPpWFk5hJoga2U5YGwcIsM/exec")
+  const panelUrl = "https://script.google.com/macros/s/AKfycbzp62nTyHgZ-Lnmg1Tammy6XZTFfY0h-5dyw2u9mWxl8vSiDAZ-k2V4FmhvKHLAcSo6/exec"
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -249,14 +249,13 @@ function BillApp() {
     async function fetchData() {
       // You can await here
       setIsloading(true)
-      // const url = "https://script.google.com/macros/s/AKfycbzvz-WpddVlSK0urKKQwAAl9upvXW2sXW_yUqmML-28umrPpWFk5hJoga2U5YGwcIsM/exec"
       const response = await fetch(panelUrl);
       const result = await response.json();
       setLabourCharges(result.data)
       setIsloading(false)
     }
     fetchData();
-  }, [panelUrl])
+  }, [])
 
   return (
     <>
@@ -267,13 +266,6 @@ function BillApp() {
             <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-            <Nav>
-                <Form.Select size="lg"
-                  className='m-2' onChange={(e) => setPanelUrl(e.target.value)}>
-                  <option value="https://script.google.com/macros/s/AKfycbzvz-WpddVlSK0urKKQwAAl9upvXW2sXW_yUqmML-28umrPpWFk5hJoga2U5YGwcIsM/exec">New Panel</option>
-                  <option value="https://script.google.com/macros/s/AKfycbxD9TeEyPyA1Hr6-6yXDnpuQkZAYNzbsvN3WIwChmSLpdNFQA68WnGa4jpBZq5dvCa_Og/exec ">Old Panel</option>
-                </Form.Select>
-              </Nav>
               <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} />} fileName={`labour_charges.pdf`}>
                 {({ blob, url, loading, error }) => {
                   if (loading) {
@@ -303,18 +295,9 @@ function BillApp() {
                 <Button
                   variant='info'
                   className='m-2'
-                  href="https://docs.google.com/spreadsheets/d/1N9Q7pTWpTSUBjuKpiCdhQN7HBcwM0f0_ry3UC9kNUAA/edit?usp=sharing"
+                  href="https://docs.google.com/spreadsheets/d/1v65zPdjREGdZ5Yq5Mxn3y2LiuxQ_RhzCCZ7UF1Sr9yk/edit?usp=sharing"
                   target="_blank">
-                  New Panel
-                </Button>
-              </Nav>
-              <Nav>
-                <Button
-                  variant='dark'
-                  className='m-2'
-                  href="https://docs.google.com/spreadsheets/d/1Qr1rcwtGwDfMz2TTXxCQaZE7RFPpycKLGGWFy5d3tzE/edit?usp=sharing"
-                  target="_blank">
-                  Old Panel
+                  Panel
                 </Button>
               </Nav>
               <Nav>
