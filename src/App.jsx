@@ -16,6 +16,7 @@ import { supabase } from './supabase';
 import InvoicePDF from './InvoicePdf';
 import LabourChargesPdf from './LabourChargesPdf';
 import Loader from './Loader';
+import { vendorConfig } from './constants/config';
 
 function BillApp() {
   const [labourCharges, setLabourCharges] = useState([])
@@ -36,7 +37,6 @@ function BillApp() {
     advances: '',
     advancesTotal: ''
   });
-  const panelUrl = "https://script.google.com/macros/s/AKfycbzp62nTyHgZ-Lnmg1Tammy6XZTFfY0h-5dyw2u9mWxl8vSiDAZ-k2V4FmhvKHLAcSo6/exec"
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -80,7 +80,7 @@ function BillApp() {
           // Make your API call here
 
           const { data, error } = await supabase
-            .from('histories_new')
+            .from(vendorConfig.tableName)
             .select()
             .eq('id', id)
           const response = data[0]
@@ -246,10 +246,15 @@ function BillApp() {
   };
 
   useEffect(() => {
+    // Update document title from config
+    document.title = vendorConfig.companyName;
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
       // You can await here
       setIsloading(true)
-      const response = await fetch(panelUrl);
+      const response = await fetch(vendorConfig.panelUrl);
       const result = await response.json();
       setLabourCharges(result.data)
       setIsloading(false)
@@ -263,10 +268,10 @@ function BillApp() {
       <Container>
         <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
           <Container>
-            <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
+            <Navbar.Brand href="/" className='text-danger fw-bold' style={{ color: vendorConfig.brandColor }}>{vendorConfig.companyName}</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} />} fileName={`labour_charges.pdf`}>
+              <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} config={vendorConfig} />} fileName={`labour_charges.pdf`}>
                 {({ blob, url, loading, error }) => {
                   if (loading) {
                     return 'Loading document'
@@ -295,7 +300,7 @@ function BillApp() {
                 <Button
                   variant='info'
                   className='m-2'
-                  href="https://docs.google.com/spreadsheets/d/1v65zPdjREGdZ5Yq5Mxn3y2LiuxQ_RhzCCZ7UF1Sr9yk/edit?usp=sharing"
+                  href={vendorConfig.panelSheetUrl}
                   target="_blank">
                   Panel
                 </Button>
@@ -538,7 +543,7 @@ function BillApp() {
         </Row>
         <Row>
           <Col xs={12} className='d-flex'>
-            <PDFDownloadLink document={<InvoicePDF bill={bill} formData={formData} />} fileName={`${formData.name}.pdf`}>
+            <PDFDownloadLink document={<InvoicePDF bill={bill} formData={formData} config={vendorConfig} />} fileName={`${formData.name}.pdf`}>
               {({ blob, url, loading, error }) => {
                 if (loading) {
                   return 'Loading document'
@@ -548,7 +553,7 @@ function BillApp() {
                       onClick={async () => {
                         // console.log({ ...formData, bills: JSON.stringify(bill) })
                         const { error } = await supabase
-                          .from('histories_new')
+                          .from(vendorConfig.tableName)
                           .insert({ ...formData, bills: JSON.stringify(bill) });
 
                         if (error) {

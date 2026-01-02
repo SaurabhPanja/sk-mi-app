@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 5,
     textAlign: 'center',
-    backgroundColor: "#B19CD9",
+    backgroundColor: "#B19CD9", // Will be overridden by config
   },
   title: {
     fontSize: '16px',
@@ -59,18 +59,6 @@ const styles = StyleSheet.create({
   }
 });
 
-const InvoiceHeader = () => (
-  <View style={styles.header}>
-    <View style={styles.title}>
-      <Text>Rizwan Bhai POP</Text>
-    </View>
-    <View style={styles.companyInfo}>
-      <Text>Faijan park 2 bhoja talaoudi</Text>
-      <Text>Phone no.: 9725955463 Email: rijwansiddiki2450@gmail.com</Text>
-    </View>
-  </View>
-);
-
 const splitBillItems = (bill) => {
   const billPages = [];
   for (let i = 0; i < bill.length; i += MAX_ITEM_TABLE) {
@@ -79,14 +67,25 @@ const splitBillItems = (bill) => {
   return billPages;
 };
 
-export default ({ bill, formData }) => {
+export default ({ bill, formData, config }) => {
   const billPages = splitBillItems(bill);
+  
+  // Merge config theme color with styles
+  const headerStyle = { ...styles.header, backgroundColor: config.themeColor };
 
   return (
     <Document>
       {billPages.map((billPage, index) => (
         <Page style={styles.page} key={index}>
-          <InvoiceHeader />
+          <View style={headerStyle}>
+            <View style={styles.title}>
+              <Text>{config.companyName}</Text>
+            </View>
+            <View style={styles.companyInfo}>
+              <Text>{config.address}</Text>
+              <Text>Phone no.: {config.phone} Email: {config.email}</Text>
+            </View>
+          </View>
           <View style={styles.tableRow}>
             <View style={{ flexGrow: 1.5, fontWeight: '800' }}>
               <Text>{formData.name}</Text>

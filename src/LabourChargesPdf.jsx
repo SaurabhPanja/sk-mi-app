@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     fontFamily: 'opensans'
   },
   header: {
-    backgroundColor: "#B19CD9",
+    backgroundColor: "#B19CD9", // Will be overridden by config
     fontWeight: 'bold',
     color: '#fff',
     height: "60px",
@@ -65,18 +65,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const InvoiceHeader = () => (
-  <View style={styles.header}>
-    <Text style={{ width: '33%', textAlign: 'left' }}>Phone no.: 9725955463</Text>
-    <Text style={styles.title}>Rizwan Bhai POP</Text>
-    <Text style={{ width: '33%', textAlign: 'right' }}>Faijan park 2 bhoja talaoudi &nbsp;&nbsp;</Text>
-  </View>
-);
-
-export default ({ labourCharges }) => {
+export default ({ labourCharges, config }) => {
   const itemsPerPage = 32;
   const pages = [];
   let currentPage = [];
+  
+  // Merge config theme color with styles
+  const headerStyle = { ...styles.header, backgroundColor: config.themeColor };
 
   labourCharges.forEach((item, index) => {
     currentPage.push(item);
@@ -84,7 +79,11 @@ export default ({ labourCharges }) => {
     if ((index + 1) % itemsPerPage === 0 || index === labourCharges.length - 1) {
       pages.push(
         <Page style={styles.page} key={`page-${pages.length}`}>
-          <InvoiceHeader />
+          <View style={headerStyle}>
+            <Text style={{ width: '33%', textAlign: 'left' }}>Phone no.: {config.phone}</Text>
+            <Text style={styles.title}>{config.companyName}</Text>
+            <Text style={{ width: '33%', textAlign: 'right' }}>{config.address} &nbsp;&nbsp;</Text>
+          </View>
           <View style={styles.table}>
             <View style={[styles.tableRow, styles.tableHeader]}>
               <Text style={{ width: '5%', ...styles.tableCol }}>&nbsp; #</Text>

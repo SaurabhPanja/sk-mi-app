@@ -11,6 +11,7 @@ import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { vendorConfig } from './constants/config';
 
 const HistoryList = () => {
     const [histories, setHistories] = useState([]);
@@ -25,7 +26,7 @@ const HistoryList = () => {
     const fetchHistories = async () => {
         try {
             const { data, error } = await supabase
-                .from('histories_new')
+                .from(vendorConfig.tableName)
                 .select()
                 .order('created_at', { ascending: false });
 
@@ -53,7 +54,7 @@ const HistoryList = () => {
     const handleDeleteConfirm = async () => {
         try {
             const { error } = await supabase
-                .from('histories_new')
+                .from(vendorConfig.tableName)
                 .delete()
                 .match({ id: selectedHistoryId });
 
@@ -79,7 +80,7 @@ const HistoryList = () => {
         <Container>
             <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
                 <Container>
-                    <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
+                    <Navbar.Brand href="/" className='text-danger fw-bold' style={{ color: vendorConfig.brandColor }}>{vendorConfig.companyName}</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav>
