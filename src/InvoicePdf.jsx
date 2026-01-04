@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 const InvoiceHeader = () => (
   <View style={styles.header}>
     <View style={styles.title}>
-      <Text>Rizwan Bhai POP</Text>
+      <Text>Rijwan Bhai POP</Text>
     </View>
     <View style={styles.companyInfo}>
       <Text>Faijan park 2 bhoja talaoudi</Text>

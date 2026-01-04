@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 const InvoiceHeader = () => (
   <View style={styles.header}>
     <Text style={{ width: '33%', textAlign: 'left' }}>Phone no.: 9725955463</Text>
-    <Text style={styles.title}>Rizwan Bhai POP</Text>
+    <Text style={styles.title}>Rijwan Bhai POP</Text>
     <Text style={{ width: '33%', textAlign: 'right' }}>Faijan park 2 bhoja talaoudi &nbsp;&nbsp;</Text>
   </View>
 );

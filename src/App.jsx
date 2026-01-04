@@ -263,7 +263,7 @@ function BillApp() {
       <Container>
         <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
           <Container>
-            <Navbar.Brand href="/" className='text-danger fw-bold'>Rizwan Bhai POP</Navbar.Brand>
+            <Navbar.Brand href="/" className='text-danger fw-bold'>Rijwan Bhai POP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <PDFDownloadLink document={<LabourChargesPdf labourCharges={labourCharges} />} fileName={`labour_charges.pdf`}>
