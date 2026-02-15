@@ -7,10 +7,8 @@ Font.register(
 
 const styles = StyleSheet.create({
   page: {
-    // margin: '5px',
     padding: '20px',
     fontSize: '12px',
-    width: '100px',
     fontFamily: 'opensans'
   },
   header: {
@@ -32,7 +30,7 @@ const styles = StyleSheet.create({
   },
   table: {
     display: 'table',
-    width: 'auto',
+    width: '100%',
     borderStyle: 'solid',
     borderColor: '#000',
     borderWidth: 1,
@@ -47,7 +45,9 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderBottomWidth: 1,
     borderRightWidth: 1,
-    padding: 2,
+    padding: 4,
+    overflow: 'hidden',
+    minWidth: 0,
   },
   tableHeader: {
     fontWeight: 'bold',
@@ -71,6 +71,25 @@ const InvoiceHeader = () => (
   </View>
 );
 
+// Split long strings with explicit newlines so they wrap to the next line in the cell
+const wrapLongText = (str, maxChars = 14) => {
+  const s = str != null ? String(str) : '';
+  if (!s || s.length <= maxChars) return s;
+  const lines = [];
+  for (let i = 0; i < s.length; i += maxChars) {
+    lines.push(s.slice(i, i + maxChars));
+  }
+  return lines.join('\n');
+};
+
+const colWidths = {
+  col1: { width: '5%', flexGrow: 0, flexShrink: 0 },
+  col2: { width: '35%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
+  col3: { width: '30%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
+  col4: { width: '12%', flexGrow: 0, flexShrink: 0 },
+  col5: { width: '18%', flexGrow: 0, flexShrink: 0 },
+};
+
 const splitBillItems = (bill) => {
   const billPages = [];
   for (let i = 0; i < bill.length; i += MAX_ITEM_TABLE) {
@@ -79,8 +98,8 @@ const splitBillItems = (bill) => {
   return billPages;
 };
 
-export default ({ bill, formData }) => {
-  const billPages = splitBillItems(bill);
+export default ({ bill = [], formData = {} }) => {
+  const billPages = splitBillItems(Array.isArray(bill) ? bill : []);
 
   return (
     <Document>
@@ -89,9 +108,9 @@ export default ({ bill, formData }) => {
           <InvoiceHeader />
           <View style={styles.tableRow}>
             <View style={{ flexGrow: 1.5, fontWeight: '800' }}>
-              <Text>{formData.name}</Text>
-              <Text>{formData.address}</Text>
-              <Text>{formData.phone}</Text>
+              <Text>{formData.name ?? ''}</Text>
+              <Text>{formData.address ?? ''}</Text>
+              <Text>{formData.phone ?? ''}</Text>
             </View>
             <View style={{ flexGrow: 1 }}>
               <Text style={{ width: '30%' }}>{new Date().toLocaleString('en-IN')}</Text>
@@ -99,19 +118,19 @@ export default ({ bill, formData }) => {
           </View>
           <View style={styles.table}>
             <View style={[styles.tableRow, styles.tableHeader]}>
-              <Text style={{ width: '5%', ...styles.tableCol }}>#</Text>
-              <Text style={{ width: '45%', ...styles.tableCol }}>Item Name</Text>
-              <Text style={{ width: '20%', ...styles.tableCol }}>Dimension</Text>
-              <Text style={{ width: '10%', ...styles.tableCol }}>Rate</Text>
-              <Text style={{ width: '20%', ...styles.tableCol }}>Total</Text>
+              <View style={[styles.tableCol, colWidths.col1]}><Text>#</Text></View>
+              <View style={[styles.tableCol, colWidths.col2]}><Text>Item Name</Text></View>
+              <View style={[styles.tableCol, colWidths.col3]}><Text>Dimension</Text></View>
+              <View style={[styles.tableCol, colWidths.col4]}><Text>Rate</Text></View>
+              <View style={[styles.tableCol, colWidths.col5]}><Text>Total</Text></View>
             </View>
             {billPage.map((item, itemIndex) => (
-              <View style={styles.tableRow} key={`${index}-${itemIndex}`}>
-                <Text style={{ width: '5%', ...styles.tableCol }}>{itemIndex + 1 + (index * MAX_ITEM_TABLE)}</Text>
-                <Text style={{ width: '45%', ...styles.tableCol }}>{item.itemName}</Text>
-                <Text style={{ width: '20%', ...styles.tableCol }}>{item.dimension}</Text>
-                <Text style={{ width: '10%', ...styles.tableCol }}>{item.rate}</Text>
-                <Text style={{ width: '20%', ...styles.tableCol }}>{Number(item.total).toLocaleString("en-IN")}</Text>
+              <View style={styles.tableRow} key={`${index}-${itemIndex}`} wrap={false}>
+                <View style={[styles.tableCol, colWidths.col1]}><Text>{itemIndex + 1 + (index * MAX_ITEM_TABLE)}</Text></View>
+                <View style={[styles.tableCol, colWidths.col2]}><Text wrap>{item.itemName ?? ''}</Text></View>
+                <View style={[styles.tableCol, colWidths.col3]}><Text>{wrapLongText(item.dimension)}</Text></View>
+                <View style={[styles.tableCol, colWidths.col4]}><Text>{item.rate ?? ''}</Text></View>
+                <View style={[styles.tableCol, colWidths.col5]}><Text>{Number(item.total || 0).toLocaleString("en-IN")}</Text></View>
               </View>
             ))}
           </View>
@@ -126,13 +145,13 @@ export default ({ bill, formData }) => {
                 </View>
                 <View style={styles.tableRow}>
                   <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Advance</Text>
-                  <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal).toLocaleString("en-IN")}</Text>
+                  <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal || 0).toLocaleString("en-IN")}</Text>
                 </View>
                 <View style={styles.tableRow}>
                   <Text style={{ width: '80%', fontSize: '18px', ...styles.tableCol }}>Balance</Text>
                   <Text style={{ width: '20%', fontSize: '18px', ...styles.tableCol }}>{billPages.reduce((accumulator, currentPage) => {
                     return accumulator + currentPage.reduce((accum, curr) => accum + Number(curr.total), 0);
-                  }, -1 * formData.advancesTotal).toLocaleString("en-IN")}</Text>
+                  }, -1 * (formData.advancesTotal || 0)).toLocaleString("en-IN")}</Text>
                 </View>
               </View>
               <View style={{ fontWeight: 'bold' }}>
@@ -141,7 +160,7 @@ export default ({ bill, formData }) => {
                 </Text>
               </View>
               <View>
-                <Text>{formData.description}</Text>
+                <Text>{formData.description ?? ''}</Text>
               </View>
             </>
           )}
