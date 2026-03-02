@@ -1,8 +1,8 @@
 {
   "_comment": "Note: Update these values to match vendorConfig in src/constants/config.js",
-  "name": "Rizwan Bhai POP",
-  "short_name": "Rizwan POP",
-  "description": "Rizwan Bhai POP Application",
+  "name": "Rijwan Bhai POP",
+  "short_name": "Rijwan POP",
+  "description": "Rijwan Bhai POP Application",
   "start_url": "/",
   "display": "standalone",
   "_comment2": "Note: Update theme_color and background_color to match vendorConfig.themeColor",
