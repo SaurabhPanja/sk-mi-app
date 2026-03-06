@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
+import { pdf } from '@react-pdf/renderer';
 import { supabase } from './supabase';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -11,12 +12,14 @@ import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import InvoicePDF from './InvoicePdf';
 
 const HistoryList = () => {
     const [histories, setHistories] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedHistoryId, setSelectedHistoryId] = useState(null);
+    const [sharingHistoryId, setSharingHistoryId] = useState(null);
 
     useEffect(() => {
         fetchHistories();
@@ -75,6 +78,48 @@ const HistoryList = () => {
         setSelectedHistoryId(null);
     };
 
+    const handleShareClick = async (history) => {
+        setSharingHistoryId(history.id);
+        try {
+            const formData = {
+                name: history.name,
+                address: history.address,
+                phone: history.phone,
+                description: history.description || '',
+                advances: history.advances || '',
+                advancesTotal: history.advancesTotal || ''
+            };
+            const bill = JSON.parse(history.bills || '[]');
+            const blob = await pdf(<InvoicePDF bill={bill} formData={formData} />).toBlob();
+            const fileName = `${formData.name || 'invoice'}.pdf`;
+            const file = new File([blob], fileName, { type: 'application/pdf' });
+
+            if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: `Invoice - ${formData.name}`,
+                    text: `Invoice for ${formData.name}`
+                });
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+                const phone = (formData.phone || '').replace(/\D/g, '');
+                const whatsappUrl = phone ? `https://wa.me/${phone}` : 'https://wa.me/';
+                window.open(whatsappUrl, '_blank');
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('Share failed:', err);
+            }
+        } finally {
+            setSharingHistoryId(null);
+        }
+    };
+
     return (
         <Container>
             <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
@@ -122,8 +167,16 @@ const HistoryList = () => {
                                             {new Date(history.created_at).toLocaleString()}
                                         </Badge>
                                     </td>
-                                    <td>
-                                        <Button variant='danger' onClick={() => handleDeleteClick(history.id)}>
+                                    <td className='d-flex gap-1'>
+                                        <Button
+                                            variant='success'
+                                            size='sm'
+                                            onClick={() => handleShareClick(history)}
+                                            disabled={sharingHistoryId === history.id}
+                                        >
+                                            {sharingHistoryId === history.id ? 'Preparing...' : 'Share'}
+                                        </Button>
+                                        <Button variant='danger' size='sm' onClick={() => handleDeleteClick(history.id)}>
                                             Delete
                                         </Button>
                                     </td>
