@@ -71,6 +71,17 @@ const InvoiceHeader = () => (
   </View>
 );
 
+const evalDimension = (dim) => {
+  try {
+    const val = String(dim ?? '').toLowerCase().replaceAll('x', '*');
+    // eslint-disable-next-line no-new-func
+    const result = new Function(`return (${val})`)();
+    return isNaN(result) ? 0 : Number(result);
+  } catch {
+    return 0;
+  }
+};
+
 // Split long strings with explicit newlines so they wrap to the next line in the cell
 const wrapLongText = (str, maxChars = 14) => {
   const s = str != null ? String(str) : '';
@@ -133,16 +144,23 @@ export default ({ bill = [], formData = {} }) => {
                 <View style={[styles.tableCol, colWidths.col5]}><Text>{Number(item.total || 0).toLocaleString("en-IN")}</Text></View>
               </View>
             ))}
+            {index === billPages.length - 1 && (
+              <View style={[styles.tableRow, styles.tableHeader]} wrap={false}>
+                <View style={[styles.tableCol, colWidths.col1]}><Text> </Text></View>
+                <View style={[styles.tableCol, colWidths.col2]}><Text>Total</Text></View>
+                <View style={[styles.tableCol, colWidths.col3]}>
+                  <Text>{billPages.reduce((acc, page) => acc + page.reduce((a, c) => a + evalDimension(c.dimension), 0), 0).toLocaleString("en-IN")}</Text>
+                </View>
+                <View style={[styles.tableCol, colWidths.col4]}><Text> </Text></View>
+                <View style={[styles.tableCol, colWidths.col5]}>
+                  <Text>{billPages.reduce((acc, page) => acc + page.reduce((a, c) => a + Number(c.total), 0), 0).toLocaleString("en-IN")}</Text>
+                </View>
+              </View>
+            )}
           </View>
           {index === billPages.length - 1 && (
             <>
               <View>
-                <View style={styles.tableRow}>
-                  <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Total</Text>
-                  <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{billPages.reduce((accumulator, currentPage) => {
-                    return accumulator + currentPage.reduce((accum, curr) => accum + Number(curr.total), 0);
-                  }, 0).toLocaleString("en-IN")}</Text>
-                </View>
                 <View style={styles.tableRow}>
                   <Text style={{ width: '80%', fontSize: '14px', ...styles.tableCol }}>Advance</Text>
                   <Text style={{ width: '20%', fontSize: '14px', ...styles.tableCol }}>{Number(formData.advancesTotal || 0).toLocaleString("en-IN")}</Text>
