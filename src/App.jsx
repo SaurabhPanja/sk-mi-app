@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import Select from 'react-select'
 import Table from 'react-bootstrap/Table'
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from './supabase';
 
 import InvoicePDF from './InvoicePdf';
@@ -18,6 +18,7 @@ import LabourChargesPdf from './LabourChargesPdf';
 import Loader from './Loader';
 
 function BillApp() {
+  const navigate = useNavigate();
   const [labourCharges, setLabourCharges] = useState([])
   const [show, setShow] = useState(false);
   const [rate, setRate] = useState("")
@@ -43,6 +44,8 @@ function BillApp() {
   const [isloading, setIsloading] = useState(false)
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleResetClick = () => {
     setShowResetModal(true);
@@ -537,44 +540,54 @@ function BillApp() {
           </Col>
         </Row>
         <Row>
-          <Col xs={12} className='d-flex'>
-            <PDFDownloadLink document={<InvoicePDF bill={bill} formData={formData} />} fileName={`${formData.name}.pdf`}>
-              {({ blob, url, loading, error }) => {
-                if (loading) {
-                  return 'Loading document'
-                } else {
-                  return (
-                    <Button
-                      onClick={async () => {
-                        // console.log({ ...formData, bills: JSON.stringify(bill) })
-                        const { error } = await supabase
-                          .from('histories_new')
-                          .insert({ ...formData, bills: JSON.stringify(bill) });
+          <Col xs={12} className='d-flex flex-column'>
+            {saveError && (
+              <div className="alert alert-danger mb-2" role="alert">
+                {saveError}
+                <Button
+                  variant="link"
+                  className="p-0 ms-2"
+                  onClick={() => setSaveError(null)}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            )}
+            <Button
+              onClick={async () => {
+                setSaveError(null);
+                setIsSaving(true);
+                try {
+                  const { error } = await supabase
+                    .from('histories_new')
+                    .insert({ ...formData, bills: JSON.stringify(bill) });
 
-                        if (error) {
-                          console.log(error);
-                          alert("An error occurred, please contact Saurabh!");
-                        }
-                      }}
-                      variant="outline-info"
-                      size="large"
-                      className="custom-button"
-                      style={{
-                        fontWeight: 'bold',
-                        fontSize: '18px',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        marginBottom: '14px',
-                        transition: 'background-color 0.3s ease',
-                      }}
-                    >
-                      Download now!
-                    </Button>
-                  )
+                  if (error) {
+                    throw error;
+                  }
+                  navigate('/history');
+                } catch (err) {
+                  console.error('Save failed:', err);
+                  setSaveError('Failed to save. Please try again.');
+                } finally {
+                  setIsSaving(false);
                 }
-              }
-              }
-            </PDFDownloadLink>
+              }}
+              disabled={isSaving}
+              variant="outline-info"
+              size="large"
+              className="custom-button align-self-start"
+              style={{
+                fontWeight: 'bold',
+                fontSize: '18px',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                marginBottom: '14px',
+                transition: 'background-color 0.3s ease',
+              }}
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
           </Col>
 
         </Row>
