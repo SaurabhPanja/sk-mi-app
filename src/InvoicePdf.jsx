@@ -94,11 +94,12 @@ const wrapLongText = (str, maxChars = 14) => {
 };
 
 const colWidths = {
-  col1: { width: '5%', flexGrow: 0, flexShrink: 0 },
-  col2: { width: '35%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
-  col3: { width: '30%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
-  col4: { width: '12%', flexGrow: 0, flexShrink: 0 },
-  col5: { width: '18%', flexGrow: 0, flexShrink: 0 },
+  col1: { width: '4%', flexGrow: 0, flexShrink: 0 },
+  col2: { width: '24%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
+  col3: { width: '38%', flexGrow: 0, flexShrink: 1, minWidth: 0 },
+  col4: { width: '10%', flexGrow: 0, flexShrink: 0 },
+  col5: { width: '9%', flexGrow: 0, flexShrink: 0 },
+  col6: { width: '15%', flexGrow: 0, flexShrink: 0 },
 };
 
 const splitBillItems = (bill) => {
@@ -132,27 +133,30 @@ export default ({ bill = [], formData = {} }) => {
               <View style={[styles.tableCol, colWidths.col1]}><Text>#</Text></View>
               <View style={[styles.tableCol, colWidths.col2]}><Text>Item Name</Text></View>
               <View style={[styles.tableCol, colWidths.col3]}><Text>Dimension</Text></View>
-              <View style={[styles.tableCol, colWidths.col4]}><Text>Rate</Text></View>
-              <View style={[styles.tableCol, colWidths.col5]}><Text>Total</Text></View>
+              <View style={[styles.tableCol, colWidths.col4]}><Text>Sq.ft</Text></View>
+              <View style={[styles.tableCol, colWidths.col5]}><Text>Rate</Text></View>
+              <View style={[styles.tableCol, colWidths.col6]}><Text>Total</Text></View>
             </View>
             {billPage.map((item, itemIndex) => (
               <View style={styles.tableRow} key={`${index}-${itemIndex}`} wrap={false}>
                 <View style={[styles.tableCol, colWidths.col1]}><Text>{itemIndex + 1 + (index * MAX_ITEM_TABLE)}</Text></View>
                 <View style={[styles.tableCol, colWidths.col2]}><Text wrap>{item.itemName ?? ''}</Text></View>
-                <View style={[styles.tableCol, colWidths.col3]}><Text>{wrapLongText(item.dimension)}</Text></View>
-                <View style={[styles.tableCol, colWidths.col4]}><Text>{item.rate ?? ''}</Text></View>
-                <View style={[styles.tableCol, colWidths.col5]}><Text>{Number(item.total || 0).toLocaleString("en-IN")}</Text></View>
+                <View style={[styles.tableCol, colWidths.col3]}><Text wrap>{item.dimension ?? ''}</Text></View>
+                <View style={[styles.tableCol, colWidths.col4]}><Text>{evalDimension(item.dimension) || ''}</Text></View>
+                <View style={[styles.tableCol, colWidths.col5]}><Text>{item.rate ?? ''}</Text></View>
+                <View style={[styles.tableCol, colWidths.col6]}><Text>{Number(item.total || 0).toLocaleString("en-IN")}</Text></View>
               </View>
             ))}
             {index === billPages.length - 1 && (
               <View style={[styles.tableRow, styles.tableHeader]} wrap={false}>
                 <View style={[styles.tableCol, colWidths.col1]}><Text> </Text></View>
                 <View style={[styles.tableCol, colWidths.col2]}><Text>Total</Text></View>
-                <View style={[styles.tableCol, colWidths.col3]}>
+                <View style={[styles.tableCol, colWidths.col3]}><Text> </Text></View>
+                <View style={[styles.tableCol, colWidths.col4]}>
                   <Text>{billPages.reduce((acc, page) => acc + page.reduce((a, c) => a + evalDimension(c.dimension), 0), 0).toLocaleString("en-IN")}</Text>
                 </View>
-                <View style={[styles.tableCol, colWidths.col4]}><Text> </Text></View>
-                <View style={[styles.tableCol, colWidths.col5]}>
+                <View style={[styles.tableCol, colWidths.col5]}><Text> </Text></View>
+                <View style={[styles.tableCol, colWidths.col6]}>
                   <Text>{billPages.reduce((acc, page) => acc + page.reduce((a, c) => a + Number(c.total), 0), 0).toLocaleString("en-IN")}</Text>
                 </View>
               </View>
